@@ -4,6 +4,8 @@ import { persist } from "zustand/middleware";
 export interface Player {
   id: string;
   name: string;
+  profileImage: string; // base64 encoded image or URL
+  woreda: string; // formatted as "01", "02", etc.
   questionsAnswered: number[];
   correctAnswers: number;
   incorrectAnswers: number;
@@ -19,7 +21,7 @@ interface GameState {
   tieBreakers: number[]; // Track which questions are tie breakers
 
   // Player management
-  addPlayer: (name: string) => void;
+  addPlayer: (name: string, profileImage: string, woreda: string) => void;
   removePlayer: (id: string) => void;
   setCurrentPlayer: (id: string | null) => void;
   getCurrentPlayer: () => Player | null;
@@ -57,7 +59,11 @@ export const useGameStore = create<GameState>()(
       totalQuestions: 25, // Updated to match the total number of questions in questions.ts
       tieBreakers: [],
 
-      addPlayer: (name: string) => {
+      addPlayer: (
+        name: string,
+        profileImage: string = "",
+        woreda: string = ""
+      ) => {
         const id = Date.now().toString();
         set((state) => {
           const newPlayers = [
@@ -65,6 +71,8 @@ export const useGameStore = create<GameState>()(
             {
               id,
               name,
+              profileImage,
+              woreda,
               questionsAnswered: [],
               correctAnswers: 0,
               incorrectAnswers: 0,

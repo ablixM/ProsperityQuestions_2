@@ -386,7 +386,7 @@ const QuestionPage = () => {
               <div className="p-6 bg-red-50 text-red-600 rounded-xl text-center text-2xl font-medium mb-8">
                 <div className="flex items-center justify-center">
                   <XCircle className="w-8 h-8 mr-3" />
-                  Time's up! You didn't answer in time.
+                  የጥያቄው ጊዜ ገደብ አልቋል
                 </div>
               </div>
             )}
@@ -395,7 +395,7 @@ const QuestionPage = () => {
               <div className="p-6 bg-green-50 text-green-600 rounded-xl text-center text-2xl font-medium mb-8">
                 <div className="flex items-center justify-center">
                   <CheckCircle2 className="w-8 h-8 mr-3" />
-                  Correct! Great job!
+                  ጥያቄው በትክክል ተመልሷል!
                 </div>
               </div>
             )}
@@ -407,7 +407,7 @@ const QuestionPage = () => {
                 <div className="p-6 bg-red-50 text-red-600 rounded-xl text-center text-2xl font-medium mb-8">
                   <div className="flex items-center justify-center">
                     <XCircle className="w-8 h-8 mr-3" />
-                    Incorrect. The correct answer is highlighted above.
+                    ጥያቄው በትክክል አልተመለሰምአልተመለሰም!
                   </div>
                 </div>
               )}
@@ -421,7 +421,7 @@ const QuestionPage = () => {
                   className="text-blue-600 border-blue-300 flex items-center gap-2"
                 >
                   <Eye className="w-5 h-5" />
-                  Reveal Correct Answer
+                  ትክክለኛዉን መልስ አሳይ
                 </Button>
               </div>
             )}
