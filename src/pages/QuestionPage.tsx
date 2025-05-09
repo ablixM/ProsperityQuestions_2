@@ -389,7 +389,7 @@ const QuestionPage = () => {
                               : "border-gray-400"
                           }`}
                         >
-                          {String.fromCharCode(65 + index)}
+                          {["ሀ", "ለ", "ሐ", "መ", "ሠ"][index]}
                         </div>
                         <span className="ml-4 text-2xl font-medium">
                           {option}

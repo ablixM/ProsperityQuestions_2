@@ -90,6 +90,11 @@ const QuestionCard: FC<QuestionCardProps> = ({
                         />
                       </svg>
                     )}
+                    {!isSelected && (
+                      <span className="text-xs">
+                        {["ሀ", "ለ", "ሐ", "መ", "ሠ"][index]}
+                      </span>
+                    )}
                   </div>
                   <span className="ml-3 text-base">{option}</span>
                 </div>

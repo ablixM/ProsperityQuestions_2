@@ -34,7 +34,7 @@ const PlayerList = () => {
     <div className="space-y-8">
       <h2 className="text-3xl font-bold text-gray-800 flex items-center">
         <Trophy className="w-8 h-8 mr-3 text-yellow-500" />
-        Player Rankings
+        የተጫዋች ደረጃ
       </h2>
 
       <div className="space-y-5">

@@ -15,7 +15,7 @@ export const questionsData: Question[] = [
       "አቃፊ፡አካታችና ህብረብሄራዊነት መሆኑ",
       "ሀ እና ለ መልስ ናቸው",
     ],
-    correctAnswer: 2,
+    correctAnswer: 3,
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ export const questionsData: Question[] = [
       "ፍፁማዊ አንድነትን እና ፍፁማዊ ልዩነትን የሚያስቀጥል ነው",
       "አስተሳሳሪ ትናንትንና የጋራ ነገን የምናይበት ነው",
     ],
-    correctAnswer: 1,
+    correctAnswer: 2,
   },
   {
     id: 3,
@@ -37,13 +37,13 @@ export const questionsData: Question[] = [
       "እርቅ;ፍቅርና ይቅርታ ",
       "ሁሉም ትክክል ነው፡፡",
     ],
-    correctAnswer: 1,
+    correctAnswer: 3,
   },
   {
     id: 4,
     question: "ፓርቲያችን ብልፅግና የብሔራዊ አርበኝነት አምዶች ብሎ ካስቀመጣቸው ነጥቦች የማይካተተው",
     options: ["ብዝሃነት", "ፍትሃዊነት", ".ፍፁማዊነት", "አብሮነት"],
-    correctAnswer: 1,
+    correctAnswer: 2,
   },
   {
     id: 5,
@@ -55,7 +55,7 @@ export const questionsData: Question[] = [
       "መነጠልንም ሆነ ፍፁማዊ አንድነትን የሚያጠናክር በመሆኑ",
       "ሀ እና ለ መልስ ናቸው፡፡",
     ],
-    correctAnswer: 1,
+    correctAnswer: 3,
   },
   {
     id: 6,
@@ -66,7 +66,7 @@ export const questionsData: Question[] = [
       "ከሁሉም ለሁሉም በሁሉም የሆነች ኢትዮጵያን የሚገነባ ታላቅ ዕሳቤ መሆኑ",
       "ሁሉም",
     ],
-    correctAnswer: 1,
+    correctAnswer: 3,
   },
   {
     id: 7,
@@ -77,7 +77,7 @@ export const questionsData: Question[] = [
       "ታሪክንና አብሮነትን ለወል ጥቅም ለማዋል",
       "ሁሉም መልስ ናቸው",
     ],
-    correctAnswer: 2,
+    correctAnswer: 3,
   },
   {
     id: 8,
@@ -99,7 +99,7 @@ export const questionsData: Question[] = [
       "ማህበራዊ ትስስሩ የዳበረ ትውልድ ማፍራት",
       "ፍፁማዊ አንድነትን ማዕከል ያደረገ ዓውድ መስራት",
     ],
-    correctAnswer: 2,
+    correctAnswer: 3,
   },
   {
     id: 10,
@@ -112,7 +112,7 @@ export const questionsData: Question[] = [
     question:
       "የብልፅግና ፓርቲ በብሔራዊነት ሀገራዊ ልዕልናን እየገነባ ያለበትን ሂደት ማሳያ ከሆኑት ውስጥየሚካተተው",
     options: ["አረንጓ አሻራ ", "የስንዴ ምርት", "የህዳሴ ግድብ ", "ሁሉም"],
-    correctAnswer: 2,
+    correctAnswer: 3,
   },
   {
     id: 12,
@@ -123,7 +123,7 @@ export const questionsData: Question[] = [
       "የነጠላ ቡድናዊ እውነት መደገን",
       "የወል እውነት ለወል ሀገር ግንባታ",
     ],
-    correctAnswer: 2,
+    correctAnswer: 3,
   },
   {
     id: 13,
@@ -134,7 +134,7 @@ export const questionsData: Question[] = [
       "የህግ የበላይነትን ለዘላቂ ሰላም ዕሳቤ ግንባታ ይጠቅማል ",
       "ሁሉም መልስ ነው",
     ],
-    correctAnswer: 2,
+    correctAnswer: 3,
   },
   {
     id: 14,
@@ -146,7 +146,7 @@ export const questionsData: Question[] = [
       "ከይቅርታ፤ፍቅርና እርቅ ይልቅ መለያየትን የሚያጎሉ መሆናቸው",
       "ከ ‹‹ሐ›› በቀር መልስ ናቸው",
     ],
-    correctAnswer: 2,
+    correctAnswer: 4,
   },
   {
     id: 15,
@@ -157,7 +157,7 @@ export const questionsData: Question[] = [
       "ቅቡልነት ቀጣይነት ያለው ስርዓተ መንግስት መገንባት ለማስቻል",
       "ሁሉም",
     ],
-    correctAnswer: 2,
+    correctAnswer: 3,
   },
   {
     id: 16,
@@ -168,7 +168,7 @@ export const questionsData: Question[] = [
       "በህብረ ብሔራዊ ወንድማማችነትና እህትማማችነት ላይ የተመሰረተች የበለፀገች ሀገርን ለመገንባት",
       "ከ ‘’ሀ’ በቀር ሁሉም መልስ ናቸው",
     ],
-    correctAnswer: 2,
+    correctAnswer: 3,
   },
   {
     id: 17,
