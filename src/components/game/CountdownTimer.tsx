@@ -13,6 +13,7 @@ interface CountdownTimerProps {
   tickThreshold?: number;
   playTimerSound?: () => void;
   stopTimerSound?: () => void;
+  forceStop?: boolean;
 }
 
 const CountdownTimer: FC<CountdownTimerProps> = ({
@@ -26,6 +27,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
   tickThreshold = 10,
   playTimerSound,
   stopTimerSound,
+  forceStop = false,
 }) => {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isPaused, setIsPaused] = useState(true);
@@ -74,14 +76,21 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
     };
   }, []);
 
+  // Watch for forceStop prop changes
+  useEffect(() => {
+    if (forceStop && !isPaused) {
+      pauseTimer();
+    }
+  }, [forceStop]);
+
   // Start or stop timer based on isRunning prop
   useEffect(() => {
-    if (isRunning) {
+    if (isRunning && !forceStop) {
       startTimer();
     } else {
       pauseTimer();
     }
-  }, [isRunning]);
+  }, [isRunning, forceStop]);
 
   // Reset when duration changes
   useEffect(() => {
@@ -89,6 +98,8 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
   }, [duration]);
 
   const startTimer = () => {
+    if (forceStop) return; // Don't start if forceStop is true
+
     setIsPaused(false);
     onStart();
 
@@ -166,22 +177,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
 
   // Handle direct play of tick sound
   const playTick = () => {
-    if (audioRef.current) {
-      // Only restart if not already playing
-      if (!isAudioPlaying) {
-        const playPromise = audioRef.current.play();
-
-        // Handle the play promise (required for modern browsers)
-        if (playPromise !== undefined) {
-          playPromise.catch((error) => {
-            console.log("Audio play prevented by browser:", error);
-          });
-        }
-      }
-    } else if (playTimerSound) {
-      // Fallback to provided sound function if audio element not available
-      playTimerSound();
-    }
+    // Don't play sound - removed audio functionality
   };
 
   // Handle stopping the timer sound
@@ -194,7 +190,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
     }
   };
 
-  // Start the countdown when isRunning is true
+  // Start the countdown when isRunning is true and forceStop is false
   useEffect(() => {
     // Clear existing interval if there is one
     if (intervalRef.current !== null) {
@@ -202,11 +198,9 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
       intervalRef.current = null;
     }
 
-    if (isRunning) {
+    if (isRunning && !forceStop) {
       startTimer();
-
-      // Play sound on start - play it as a continuous sound
-      playTick();
+      // Don't play sound - disabled
     } else {
       // Stop any playing audio when timer is paused
       stopTick();
@@ -221,7 +215,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
       // Stop any playing audio when effect is cleaned up
       stopTick();
     };
-  }, [isRunning, onTimeUp, duration]);
+  }, [isRunning, forceStop, onTimeUp, duration]);
 
   // Calculate progress percentage for the circle
   const progressPercentage = (timeLeft / duration) * 100;
@@ -259,6 +253,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
             onClick={startTimer}
             className="bg-green-600 hover:bg-green-700 text-white"
             size="sm"
+            disabled={forceStop}
           >
             <Play className="w-4 h-4 mr-1" /> Start
           </Button>
@@ -317,25 +312,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
         </div>
       </div>
 
-      {/* Audio indicator */}
-      <div
-        className={`mt-4 flex items-center gap-2 ${
-          isAudioPlaying ? "text-blue-600" : "text-gray-400"
-        }`}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="w-5 h-5"
-        >
-          <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06zM18.584 5.106a.75.75 0 011.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 11-1.06-1.06 8.25 8.25 0 000-11.668.75.75 0 010-1.06z" />
-          <path d="M15.932 7.757a.75.75 0 011.061 0 6 6 0 010 8.486.75.75 0 01-1.06-1.061 4.5 4.5 0 000-6.364.75.75 0 010-1.06z" />
-        </svg>
-        <span className="text-sm font-medium">
-          {isAudioPlaying ? "Sound On" : "Sound Off"}
-        </span>
-      </div>
+      {/* Removed audio indicator */}
     </div>
   );
 };

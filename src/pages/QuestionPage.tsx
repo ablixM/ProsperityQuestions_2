@@ -14,6 +14,7 @@ import { questionsData } from "../data/questions";
 import { useGameStore } from "../store/gameStore";
 import { ResultDialog } from "../components/ui/dialog";
 import useSound from "use-sound";
+import CountdownTimer from "../components/game/CountdownTimer";
 
 const QuestionPage = () => {
   const { questionId } = useParams<{ questionId: string }>();
@@ -40,6 +41,7 @@ const QuestionPage = () => {
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [isPreviouslyAnswered, setIsPreviouslyAnswered] = useState(false);
   const [timeIsUp, setTimeIsUp] = useState(false);
+  const [forceStopTimer, setForceStopTimer] = useState(false);
 
   // New state for enhanced answer handling
   const [incorrectAttempts, setIncorrectAttempts] = useState(0);
@@ -49,7 +51,6 @@ const QuestionPage = () => {
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
   const [playError] = useSound("/sounds/error.mp3", { volume: 0.4 });
-  const [playTick] = useSound("/sounds/timer.wav", { volume: 0.4 });
   const [playCorrect] = useSound("/sounds/correct.mp3", { volume: 0.4 });
 
   // Check if this question was previously answered
@@ -82,36 +83,6 @@ const QuestionPage = () => {
     getCurrentPlayer,
   ]);
 
-  // Timer logic
-  useEffect(() => {
-    let timerId: number | undefined;
-
-    if (timerRunning && !isAnswered && !isPreviouslyAnswered) {
-      timerId = window.setInterval(() => {
-        setTimeLeft((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(timerId);
-            handleTimeUp();
-            return 0;
-          }
-
-          // Play tick sound for last 10 seconds
-          if (prevTime <= 11 && prevTime > 1) {
-            playTick();
-          }
-
-          return prevTime - 1;
-        });
-      }, 1000);
-    }
-
-    return () => {
-      if (timerId) {
-        clearInterval(timerId);
-      }
-    };
-  }, [timerRunning, isAnswered, isPreviouslyAnswered, playTick]);
-
   // Hide incorrect feedback after 3 seconds
   useEffect(() => {
     let feedbackTimer: number | undefined;
@@ -132,6 +103,7 @@ const QuestionPage = () => {
   const handleTimeUp = () => {
     setTimeIsUp(true);
     setTimerRunning(false);
+    setForceStopTimer(true);
     setIsAnswered(true);
     setShowCorrectAnswer(true);
 
@@ -156,10 +128,14 @@ const QuestionPage = () => {
     // Always save the selected answer for UI display
     setSelectedAnswerIndex(answerIndex);
 
+    // Force stop the timer when an answer is clicked
+    setTimerRunning(false);
+    setForceStopTimer(true);
+    console.log("Timer forced to stop by answer selection");
+
     if (answerIndex === question?.correctAnswer) {
       // Correct answer handling
       playCorrect();
-      setTimerRunning(false);
       setIsAnswered(true);
       setIsCorrect(true);
       setShowCorrectAnswer(true);
@@ -189,7 +165,6 @@ const QuestionPage = () => {
 
       // Check if this is the third incorrect attempt
       if (incorrectAttempts >= 2) {
-        setTimerRunning(false);
         setIsAnswered(true);
         setIsCorrect(false);
         setShowCorrectAnswer(true);
@@ -208,12 +183,13 @@ const QuestionPage = () => {
 
   const handleRevealAnswer = () => {
     setShowCorrectAnswer(true);
+    setForceStopTimer(true);
+    setTimerRunning(false);
 
     // If not already answered, mark as incorrect and complete
     if (!isAnswered && !isPreviouslyAnswered) {
       setIsAnswered(true);
       setIsCorrect(false);
-      setTimerRunning(false);
 
       // Mark as completed with currently selected answer (or null)
       markQuestionAsCompleted(
@@ -240,16 +216,20 @@ const QuestionPage = () => {
 
   // Handle timer actions
   const handleStartTimer = () => {
+    setForceStopTimer(false);
     setTimerRunning(true);
+    console.log("Starting timer");
   };
 
   const handlePauseTimer = () => {
     setTimerRunning(false);
+    console.log("Pausing timer");
   };
 
   const handleResetTimer = () => {
     setTimeLeft(45);
     setTimerRunning(false);
+    setForceStopTimer(false);
   };
 
   if (!question || !currentPlayer) {
@@ -307,11 +287,6 @@ const QuestionPage = () => {
             Back to Questions
           </Button>
         </div>
-
-        {/* Player Info */}
-        {/* <div className="mb-8">
-          <PlayerCard player={currentPlayer} />
-        </div> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Question Card - Takes 3/4 of the space on large screens */}
@@ -385,7 +360,12 @@ const QuestionPage = () => {
                   return (
                     <button
                       key={index}
-                      onClick={() => handleAnswerSelect(index)}
+                      onClick={() => {
+                        // First stop the timer
+                        setForceStopTimer(true);
+                        // Then handle the answer
+                        handleAnswerSelect(index);
+                      }}
                       className={`p-6 rounded-xl text-left transition-all ${optionClass} ${
                         (isAnswered && showCorrectAnswer) ||
                         isPreviouslyAnswered ||
@@ -471,92 +451,29 @@ const QuestionPage = () => {
           <div className="lg:col-span-1">
             {!isPreviouslyAnswered && (
               <div className="bg-white rounded-2xl shadow-xl p-8 h-full flex flex-col">
-                <h3 className="text-2xl font-bold text-center text-blue-900 mb-6 flex items-center justify-center">
-                  <Clock className="w-6 h-6 mr-2" />
-                  Time Remaining
-                </h3>
+                {/* Replace the old timer implementation with CountdownTimer component */}
+                <CountdownTimer
+                  duration={45}
+                  isRunning={timerRunning}
+                  forceStop={forceStopTimer}
+                  onTimeUp={handleTimeUp}
+                  onStart={handleStartTimer}
+                  onStop={handlePauseTimer}
+                  onReset={handleResetTimer}
+                />
 
-                {/* Timer Circle */}
-                <div className="relative w-full aspect-square mx-auto mb-6">
-                  {/* SVG for circular timer */}
-                  <svg className="w-full h-full" viewBox="0 0 120 120">
-                    {/* Background circle */}
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r="54"
-                      fill="none"
-                      stroke="#f1f5f9"
-                      strokeWidth="12"
-                    />
-                    {/* Progress circle */}
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r="54"
-                      fill="none"
-                      stroke={
-                        timeLeft <= 10
-                          ? "#ef4444"
-                          : timeLeft <= 30
-                          ? "#f59e0b"
-                          : "#3b82f6"
-                      }
-                      strokeWidth="12"
-                      strokeDasharray={2 * Math.PI * 54}
-                      strokeDashoffset={
-                        2 * Math.PI * 54 * (1 - progressPercentage / 100)
-                      }
-                      strokeLinecap="round"
-                      transform="rotate(-90 60 60)"
-                      className="transition-all duration-1000 ease-linear"
-                    />
-                  </svg>
-
-                  {/* Timer text overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <p className={`text-5xl font-bold ${getTimerColor()}`}>
-                      {formatTime(timeLeft)}
-                    </p>
+                {/* Answer Status */}
+                {isAnswered && isCorrect && (
+                  <div className="mt-6 p-4 bg-green-50 text-green-700 rounded-xl text-center">
+                    <CheckCircle2 className="w-10 h-10 mx-auto mb-2 text-green-500" />
+                    <h4 className="font-bold text-lg">Correct Answer!</h4>
                   </div>
-                </div>
+                )}
 
-                {/* Timer Controls */}
-                <div className="flex justify-center gap-4 mt-2">
-                  {!timerRunning ? (
-                    <Button
-                      onClick={handleStartTimer}
-                      disabled={isAnswered}
-                      className="bg-green-600 hover:bg-green-700 text-white text-lg px-6 py-3"
-                    >
-                      Start
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={handlePauseTimer}
-                      disabled={isAnswered}
-                      className="bg-amber-600 hover:bg-amber-700 text-white text-lg px-6 py-3"
-                    >
-                      Pause
-                    </Button>
-                  )}
-                  <Button
-                    onClick={handleResetTimer}
-                    disabled={isAnswered}
-                    variant="outline"
-                    className="text-gray-600 border-gray-300 text-lg px-6 py-3"
-                  >
-                    Reset
-                  </Button>
-                </div>
-
-                {/* Warning message when time is running low */}
-                {timeLeft <= 15 && timeLeft > 0 && timerRunning && (
-                  <div className="mt-6 p-4 bg-amber-50 text-amber-700 rounded-xl text-center text-xl animate-pulse">
-                    <div className="flex items-center justify-center">
-                      <AlertTriangle className="w-6 h-6 mr-2" />
-                      Time is running out!
-                    </div>
+                {isAnswered && isCorrect === false && (
+                  <div className="mt-6 p-4 bg-red-50 text-red-700 rounded-xl text-center">
+                    <XCircle className="w-10 h-10 mx-auto mb-2 text-red-500" />
+                    <h4 className="font-bold text-lg">Incorrect Answer</h4>
                   </div>
                 )}
 
@@ -574,21 +491,6 @@ const QuestionPage = () => {
                         />
                       ))}
                     </div>
-                  </div>
-                )}
-
-                {/* Answer Status */}
-                {isAnswered && isCorrect && (
-                  <div className="mt-6 p-4 bg-green-50 text-green-700 rounded-xl text-center">
-                    <CheckCircle2 className="w-10 h-10 mx-auto mb-2 text-green-500" />
-                    <h4 className="font-bold text-lg">Correct Answer!</h4>
-                  </div>
-                )}
-
-                {isAnswered && isCorrect === false && (
-                  <div className="mt-6 p-4 bg-red-50 text-red-700 rounded-xl text-center">
-                    <XCircle className="w-10 h-10 mx-auto mb-2 text-red-500" />
-                    <h4 className="font-bold text-lg">Incorrect Answer</h4>
                   </div>
                 )}
               </div>
