@@ -11,7 +11,6 @@ interface CountdownTimerProps {
   onReset: () => void;
   onTick?: () => void;
   tickThreshold?: number;
-  playTimerSound?: () => void;
   stopTimerSound?: () => void;
   forceStop?: boolean;
 }
@@ -25,14 +24,12 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
   onReset,
   onTick,
   tickThreshold = 10,
-  playTimerSound,
   stopTimerSound,
   forceStop = false,
 }) => {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isPaused, setIsPaused] = useState(true);
   const intervalRef = useRef<number | null>(null);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   // Create a direct reference to an audio element for better control
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -47,30 +44,12 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
 
       // Preload the audio
       audioRef.current.load();
-
-      // Add event listeners for audio state
-      audioRef.current.addEventListener("play", () => setIsAudioPlaying(true));
-      audioRef.current.addEventListener("pause", () =>
-        setIsAudioPlaying(false)
-      );
-      audioRef.current.addEventListener("ended", () =>
-        setIsAudioPlaying(false)
-      );
     }
 
     return () => {
       // Cleanup on unmount
       if (audioRef.current) {
         audioRef.current.pause();
-        audioRef.current.removeEventListener("play", () =>
-          setIsAudioPlaying(true)
-        );
-        audioRef.current.removeEventListener("pause", () =>
-          setIsAudioPlaying(false)
-        );
-        audioRef.current.removeEventListener("ended", () =>
-          setIsAudioPlaying(false)
-        );
         audioRef.current = null;
       }
     };
@@ -173,11 +152,6 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
     } else {
       return "text-blue-600 border-blue-500";
     }
-  };
-
-  // Handle direct play of tick sound
-  const playTick = () => {
-    // Don't play sound - removed audio functionality
   };
 
   // Handle stopping the timer sound

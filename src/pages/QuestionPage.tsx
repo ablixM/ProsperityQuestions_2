@@ -5,7 +5,6 @@ import {
   ChevronLeft,
   CheckCircle2,
   XCircle,
-  Clock,
   AlertTriangle,
   Eye,
   X,
@@ -36,7 +35,6 @@ const QuestionPage = () => {
   );
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(45);
   const [timerRunning, setTimerRunning] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [isPreviouslyAnswered, setIsPreviouslyAnswered] = useState(false);
@@ -227,7 +225,6 @@ const QuestionPage = () => {
   };
 
   const handleResetTimer = () => {
-    setTimeLeft(45);
     setTimerRunning(false);
     setForceStopTimer(false);
   };
@@ -235,23 +232,6 @@ const QuestionPage = () => {
   if (!question || !currentPlayer) {
     return null;
   }
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  const getTimerColor = () => {
-    if (timeLeft <= 10) return "text-red-600";
-    if (timeLeft <= 30) return "text-amber-600";
-    return "text-blue-600";
-  };
-
-  // Calculate progress percentage for the timer circle
-  const progressPercentage = (timeLeft / 45) * 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-8 relative">
