@@ -50,18 +50,37 @@ const QuestionPage = () => {
 
   const [playError] = useSound("/sounds/error.mp3", { volume: 0.4 });
   const [playTick] = useSound("/sounds/timer.wav", { volume: 0.4 });
+  const [playCorrect] = useSound("/sounds/correct.mp3", { volume: 0.4 });
 
   // Check if this question was previously answered
   useEffect(() => {
     if (questionNumber && isQuestionCompleted(questionNumber)) {
-      setIsPreviouslyAnswered(true);
+      // Get the current player to check if they already answered this question
+      // in a previous session (not the current one)
+      const player = getCurrentPlayer();
+      if (player && player.questionsAnswered.includes(questionNumber)) {
+        // If the question is the last one they answered, it's the current question - don't mark as previously answered
+        const isLastAnsweredQuestion =
+          player.questionsAnswered.length > 0 &&
+          player.questionsAnswered[player.questionsAnswered.length - 1] ===
+            questionNumber;
+
+        setIsPreviouslyAnswered(!isLastAnsweredQuestion);
+      }
     }
 
     // If the question doesn't exist or there's no current player, go back to game
     if (!question || !currentPlayer) {
       navigate("/game");
     }
-  }, [questionNumber, isQuestionCompleted, question, currentPlayer, navigate]);
+  }, [
+    questionNumber,
+    isQuestionCompleted,
+    question,
+    currentPlayer,
+    navigate,
+    getCurrentPlayer,
+  ]);
 
   // Timer logic
   useEffect(() => {
@@ -134,17 +153,18 @@ const QuestionPage = () => {
     )
       return;
 
-    const isAnswerCorrect = answerIndex === question?.correctAnswer;
+    // Always save the selected answer for UI display
     setSelectedAnswerIndex(answerIndex);
 
-    if (isAnswerCorrect) {
+    if (answerIndex === question?.correctAnswer) {
       // Correct answer handling
+      playCorrect();
       setTimerRunning(false);
       setIsAnswered(true);
       setIsCorrect(true);
       setShowCorrectAnswer(true);
 
-      // Mark question as completed
+      // Mark question as completed with correct answer
       markQuestionAsCompleted(questionNumber, answerIndex, true);
 
       // Show result dialog
@@ -155,6 +175,9 @@ const QuestionPage = () => {
 
       // Add to incorrect answers list to disable and mark as red
       setIncorrectAnswers((prev) => [...prev, answerIndex]);
+
+      // Mark question as incorrect on first wrong attempt
+      markQuestionAsCompleted(questionNumber, answerIndex, false);
 
       setIncorrectAttempts((prev) => prev + 1);
       setShowIncorrectFeedback(true);
@@ -170,9 +193,6 @@ const QuestionPage = () => {
         setIsAnswered(true);
         setIsCorrect(false);
         setShowCorrectAnswer(true);
-
-        // Mark question as completed after third attempt
-        markQuestionAsCompleted(questionNumber, answerIndex, false);
 
         // Show result dialog
         setShowResultDialog(true);
@@ -554,6 +574,21 @@ const QuestionPage = () => {
                         />
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* Answer Status */}
+                {isAnswered && isCorrect && (
+                  <div className="mt-6 p-4 bg-green-50 text-green-700 rounded-xl text-center">
+                    <CheckCircle2 className="w-10 h-10 mx-auto mb-2 text-green-500" />
+                    <h4 className="font-bold text-lg">Correct Answer!</h4>
+                  </div>
+                )}
+
+                {isAnswered && isCorrect === false && (
+                  <div className="mt-6 p-4 bg-red-50 text-red-700 rounded-xl text-center">
+                    <XCircle className="w-10 h-10 mx-auto mb-2 text-red-500" />
+                    <h4 className="font-bold text-lg">Incorrect Answer</h4>
                   </div>
                 )}
               </div>

@@ -137,11 +137,20 @@ export const useGameStore = create<GameState>()(
           if (currentPlayer) {
             updatedPlayers = state.players.map((player) => {
               if (player.id === currentPlayer.id) {
-                const newQuestionsAnswered = player.questionsAnswered.includes(
-                  questionNumber
-                )
-                  ? player.questionsAnswered
-                  : [...player.questionsAnswered, questionNumber];
+                // Check if this question is already in the player's answered questions
+                const alreadyAnswered =
+                  player.questionsAnswered.includes(questionNumber);
+
+                // If the question is already answered, we don't update the score again
+                // This prevents a correct answer after a wrong one from updating the score
+                if (alreadyAnswered) {
+                  return player;
+                }
+
+                const newQuestionsAnswered = [
+                  ...player.questionsAnswered,
+                  questionNumber,
+                ];
 
                 return {
                   ...player,
