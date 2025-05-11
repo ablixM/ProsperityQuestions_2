@@ -204,8 +204,6 @@ const QuestionPage = () => {
 
   const handleCloseResultDialog = () => {
     setShowResultDialog(false);
-    // Return to game after answering
-    handleBackToGame();
   };
 
   const handleCloseFeedback = () => {
@@ -264,7 +262,7 @@ const QuestionPage = () => {
             className="text-blue-600 text-xl"
           >
             <ChevronLeft className="w-6 h-6 mr-2" />
-            Back to Questions
+            ውደ ጥያቄዎች ተመለስ
           </Button>
         </div>
 
@@ -274,7 +272,7 @@ const QuestionPage = () => {
             {/* Question Number */}
             <div className="mb-8 flex justify-between items-center">
               <h2 className="text-4xl font-bold text-blue-900">
-                Question {questionNumber}
+                ጥያቄ ቁጥር {questionNumber}
               </h2>
 
               {isPreviouslyAnswered && (
@@ -296,9 +294,6 @@ const QuestionPage = () => {
 
             {/* Question Text */}
             <div className="bg-blue-50 rounded-xl p-8 mb-10">
-              <h3 className="text-3xl font-medium text-blue-900 mb-2">
-                Question:
-              </h3>
               <p className="text-3xl text-gray-800 leading-relaxed">
                 {question.question}
               </p>
@@ -306,9 +301,7 @@ const QuestionPage = () => {
 
             {/* Answer Options */}
             <div className="space-y-4 mb-10">
-              <h3 className="text-3xl font-medium text-blue-900 mb-6">
-                Choose an answer:
-              </h3>
+              <h3 className="text-3xl font-medium text-blue-900 mb-6">ምርጫ</h3>
               <div className="grid grid-cols-1 gap-6">
                 {question.options.map((option, index) => {
                   // Determine styling based on selection and answer state
@@ -403,7 +396,8 @@ const QuestionPage = () => {
             {isAnswered &&
               isCorrect === false &&
               showCorrectAnswer &&
-              !timeIsUp && (
+              !timeIsUp &&
+              incorrectAttempts > 0 && (
                 <div className="p-6 bg-red-50 text-red-600 rounded-xl text-center text-2xl font-medium mb-8">
                   <div className="flex items-center justify-center">
                     <XCircle className="w-8 h-8 mr-3" />
@@ -428,7 +422,7 @@ const QuestionPage = () => {
           </div>
 
           {/* Timer Card - Takes 1/4 of the space on large screens */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span- flex flex-col items-center">
             {!isPreviouslyAnswered && (
               <div className="bg-white rounded-2xl shadow-xl p-8 h-full flex flex-col">
                 {/* Replace the old timer implementation with CountdownTimer component */}
@@ -446,21 +440,21 @@ const QuestionPage = () => {
                 {isAnswered && isCorrect && (
                   <div className="mt-6 p-4 bg-green-50 text-green-700 rounded-xl text-center">
                     <CheckCircle2 className="w-10 h-10 mx-auto mb-2 text-green-500" />
-                    <h4 className="font-bold text-lg">Correct Answer!</h4>
+                    <h4 className="font-bold text-lg">በትክክል ተመልሷል!</h4>
                   </div>
                 )}
 
-                {isAnswered && isCorrect === false && (
+                {isAnswered && isCorrect === false && incorrectAttempts > 0 && (
                   <div className="mt-6 p-4 bg-red-50 text-red-700 rounded-xl text-center">
                     <XCircle className="w-10 h-10 mx-auto mb-2 text-red-500" />
-                    <h4 className="font-bold text-lg">Incorrect Answer</h4>
+                    <h4 className="font-bold text-lg">አልተመለሰም</h4>
                   </div>
                 )}
 
                 {/* Attempt Counter */}
                 {incorrectAttempts > 0 && !isAnswered && (
                   <div className="mt-6 p-4 bg-blue-50 text-blue-700 rounded-xl text-center">
-                    <h4 className="font-bold mb-1">Attempts</h4>
+                    <h4 className="font-bold mb-1">ሙክራዎች</h4>
                     <div className="flex justify-center gap-2">
                       {[...Array(3)].map((_, i) => (
                         <div
@@ -473,6 +467,17 @@ const QuestionPage = () => {
                     </div>
                   </div>
                 )}
+
+                <div className="flex flex-col items-center justify-center w-full p-4">
+                  <div className="w-48 h-48 bg-amber-200 flex items-center justify-center ">
+                    <img src="/image.png" alt="" />
+                  </div>
+                </div>
+                <div className="flex">
+                  <h2 className="text-center font-bold text-2xl">
+                    በየካ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅም ግንባታ ዘርፍ የተዘጋጀ
+                  </h2>
+                </div>
               </div>
             )}
 
@@ -494,9 +499,9 @@ const QuestionPage = () => {
         <ResultDialog
           isOpen={showResultDialog}
           onClose={handleCloseResultDialog}
-          title={isCorrect ? "Correct Answer! 🎉" : "Incorrect Answer ❌"}
+          title={isCorrect ? "በትክክል ተመልሷል! 🎉" : "ጥያቄው አልተመለሰም! ❌"}
           message=""
-          confirmLabel="Continue to Next Question"
+          confirmLabel="ወደጥያቄ ተመለስ"
           variant={isCorrect ? "success" : "danger"}
         />
       </div>

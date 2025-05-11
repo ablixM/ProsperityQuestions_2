@@ -20,7 +20,7 @@ const NumberGrid: FC<NumberGridProps> = ({
 
   // Determine grid columns based on totalNumbers
   const getGridCols = () => {
-    return "grid-cols-3 md:grid-cols-4 lg:grid-cols-7";
+    return "grid-cols-3 md:grid-cols-66 lg:grid-cols-10";
   };
 
   return (
@@ -39,7 +39,7 @@ const NumberGrid: FC<NumberGridProps> = ({
             disabled={isCompleted}
             style={{ animationDelay }}
             className={`
-              aspect-square flex items-center justify-center text-4xl md:text-5xl font-bold rounded-xl md:rounded-2xl 
+              aspect-square flex items-center justify-center text-4xl md:text-5xl font-bold rounded-xl md:rounded-xl 
               shadow-md transition-all duration-300
               ${
                 isCompleted

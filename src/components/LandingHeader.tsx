@@ -15,8 +15,13 @@ function LandingHeader() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="w-10 h-10">
-            <img src="/image.png" alt="" />
+          <div className="flex flex-row w-full gap-2 items-center">
+            <div className="w-10 h-10">
+              <img src="/image.png" alt="" />
+            </div>
+            <div className="flex flex-col items-center text-xl">
+              በየካ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅም ግንባታ ዘርፍ የተዘጋጀ
+            </div>
           </div>
 
           {/* Desktop Navigation */}

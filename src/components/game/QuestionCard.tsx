@@ -26,20 +26,18 @@ const QuestionCard: FC<QuestionCardProps> = ({
   return (
     <div className="space-y-6">
       <div className="p-5 bg-blue-50 rounded-lg shadow-sm">
-        <h3 className="text-xl font-medium text-blue-900 mb-1">Question:</h3>
         <p className="text-lg text-gray-800">{question.question}</p>
       </div>
 
       <div className="space-y-3">
-        <h3 className="text-xl font-medium text-blue-900">Choose an answer:</h3>
+        <h3 className="text-xl font-medium text-red-600">Choose an answer:</h3>
         <div className="space-y-3">
           {question.options.map((option, index) => {
             // Determine the appropriate styles based on selection state
             const isSelected = selectedAnswerIndex === index;
             const isCorrectAnswer = question.correctAnswer === index;
 
-            let optionClass =
-              "border border-gray-300 hover:border-blue-500 hover:bg-blue-50";
+            let optionClass = "border border-blue-500 bg-blue-100";
 
             if (isAnswered) {
               if (isSelected && isCorrect) {
@@ -61,7 +59,7 @@ const QuestionCard: FC<QuestionCardProps> = ({
                     onSelectAnswer(index);
                   }
                 }}
-                className={`p-4 rounded-lg w-full text-left transition-all ${optionClass} ${
+                className={`p-4 rounded-lg w-full text-left transition-all bg-blue-500 ${optionClass} ${
                   isAnswered || isPreviouslyAnswered
                     ? "cursor-default"
                     : "cursor-pointer hover:shadow-md"
@@ -70,10 +68,10 @@ const QuestionCard: FC<QuestionCardProps> = ({
               >
                 <div className="flex items-start">
                   <div
-                    className={`flex-shrink-0 w-6 h-6 mt-0.5 rounded-full flex items-center justify-center border ${
+                    className={`flex-shrink-0 w-6 h-6 mt-0.5 rounded-full flex bg-blue-700 items-center justify-center border ${
                       isSelected
                         ? "border-blue-600 bg-blue-600 text-white"
-                        : "border-gray-400"
+                        : "border-blue-400"
                     }`}
                   >
                     {isSelected && (
