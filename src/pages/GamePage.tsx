@@ -134,7 +134,7 @@ function GamePage() {
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-3xl font-medium text-blue-900">
-            Loading game resources...
+            ጥያቄዎችን በማዘጋጀት ላይ.....
           </p>
         </div>
       </div>
@@ -154,7 +154,7 @@ function GamePage() {
         className="mb-8 text-blue-600 text-xl"
       >
         <ChevronLeft className="w-6 h-6 mr-2" />
-        Back to Player Selection
+        ወደ ተጫዋች ዝርዝር ተመለስ
       </Button>
 
       <div className=" mx-auto max-w-7xl">
@@ -224,16 +224,16 @@ function GamePage() {
               <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-10 rounded-xl">
                 <div className="text-center p-8">
                   <h3 className="text-3xl font-bold text-gray-800 mb-4">
-                    All Questions Completed!
+                    ሁሉም ጥያቄዎች ተመልሰዋልተመልሰዋል
                   </h3>
                   <p className="text-2xl text-gray-600 mb-6">
-                    This player has completed all their questions.
+                    ተጫዋቹ ሁሉንም ጥያቄዎች መልሷልመልሷል
                   </p>
                   <Button
                     onClick={handleBackToHome}
                     className="bg-blue-600 text-xl px-6 py-3"
                   >
-                    Return to Player Selection
+                    ወደ ተጫዋች ዝርዝር ተመለስ
                   </Button>
                 </div>
               </div>

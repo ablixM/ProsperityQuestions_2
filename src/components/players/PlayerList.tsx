@@ -57,11 +57,10 @@ const PlayerList = () => {
                 {player.name}
               </h3>
               <p className="text-xl text-gray-600">
-                Questions:{" "}
                 <span className="font-semibold">
                   {player.questionsAnswered.length}
                 </span>{" "}
-                answered
+                ጥያቄዎች ተመልሰዋል
               </p>
             </div>
 

@@ -50,7 +50,7 @@ function HomePage() {
           className="bg-blue-600 hover:bg-blue-700 text-white text-xl px-6 py-6 h-auto rounded-xl"
         >
           <BarChart className="w-6 h-6 mr-2" />
-          Player Status Board
+          የተጫዋች ደረጃ ተመልከት
         </Button>
       </header>
 
@@ -73,7 +73,7 @@ function HomePage() {
               <div className="flex items-center justify-center mb-10">
                 <Users className="w-8 h-8 text-blue-600 mr-3" />
                 <h2 className="text-4xl font-bold text-gray-800">
-                  Player Management
+                  የተወዳዳሪ መቆጣጠሪያመቆጣጠሪያ
                 </h2>
               </div>
 
@@ -88,7 +88,7 @@ function HomePage() {
               {players.length > 0 && (
                 <div className="text-center mt-10">
                   <p className="text-xl text-gray-600 mb-6">
-                    Select a player from the list above to start playing.
+                    ጨዋታውን ለመጀመር የተጫዋች ስም ይምረጡ
                   </p>
                 </div>
               )}
@@ -97,7 +97,7 @@ function HomePage() {
                 onClick={() => setIsResetDialogOpen(true)}
                 className="mt-10 text-red-600 hover:text-red-800 transition-colors text-xl underline underline-offset-4"
               >
-                Reset All Progress
+                ሁሉንም ሂደት ይመልሱ
               </button>
             </div>
           </div>

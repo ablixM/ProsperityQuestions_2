@@ -30,7 +30,7 @@ const QuestionCard: FC<QuestionCardProps> = ({
       </div>
 
       <div className="space-y-3">
-        <h3 className="text-xl font-medium text-red-600">Choose an answer:</h3>
+        <h3 className="text-xl font-medium text-red-600">መልስ ይምረጡ:</h3>
         <div className="space-y-3">
           {question.options.map((option, index) => {
             // Determine the appropriate styles based on selection state

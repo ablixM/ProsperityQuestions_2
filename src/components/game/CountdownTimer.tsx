@@ -229,7 +229,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
             size="sm"
             disabled={forceStop}
           >
-            <Play className="w-4 h-4 mr-1" /> Start
+            <Play className="w-4 h-4 mr-1" /> ጀምርር
           </Button>
         ) : (
           <Button
@@ -237,7 +237,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
             className="bg-amber-600 hover:bg-amber-700 text-white"
             size="sm"
           >
-            <Pause className="w-4 h-4 mr-1" /> Pause
+            <Pause className="w-4 h-4 mr-1" /> አቁም
           </Button>
         )}
         <Button
@@ -246,7 +246,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
           size="sm"
           className="text-gray-600"
         >
-          <RotateCcw className="w-4 h-4 mr-1" /> Reset
+          <RotateCcw className="w-4 h-4 mr-1" /> ወደመጀመሪያ መልስ
         </Button>
       </div>
 

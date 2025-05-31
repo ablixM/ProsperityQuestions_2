@@ -485,10 +485,10 @@ const QuestionPage = () => {
               <div className="bg-green-50 border-2 border-green-200 rounded-2xl shadow-lg p-8 h-full flex flex-col items-center justify-center">
                 <CheckCircle2 className="w-20 h-20 text-green-500 mb-4" />
                 <h3 className="text-2xl font-bold text-center text-green-700 mb-2">
-                  Already Answered
+                  ጥያቄው ተመልሷልተመልሷል
                 </h3>
                 <p className="text-center text-green-600 text-lg">
-                  You've already completed this question correctly!
+                  ሁሉንም ጥያቄ መልሰዋል
                 </p>
               </div>
             )}

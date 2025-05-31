@@ -36,7 +36,7 @@ const PlayerStatusModal = ({
         <div className="bg-blue-600 p-6 flex justify-between items-center">
           <h2 className="text-4xl font-bold text-white flex items-center">
             <Users className="w-10 h-10 mr-4" />
-            Player Rankings
+            የተጫዋች ደረጃ
           </h2>
           <Button
             variant="ghost"
@@ -52,9 +52,7 @@ const PlayerStatusModal = ({
           {sortedPlayers.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full">
               <Users className="w-20 h-20 text-gray-400 mb-4" />
-              <p className="text-3xl text-gray-500">
-                No players in the game yet
-              </p>
+              <p className="text-3xl text-gray-500">ተጫዋቾች አልግቡም</p>
             </div>
           ) : (
             <div className="space-y-6">
@@ -125,7 +123,7 @@ const PlayerStatusModal = ({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                           <div className="bg-blue-50 p-4 rounded-xl text-center">
                             <p className="text-blue-500 text-lg font-medium">
-                              Questions
+                              ጥያቄዎችጥያቄዎች
                             </p>
                             <p className="text-3xl font-bold text-blue-800">
                               {player.questionsAnswered.length}/{totalQuestions}
@@ -134,7 +132,7 @@ const PlayerStatusModal = ({
 
                           <div className="bg-green-50 p-4 rounded-xl text-center">
                             <p className="text-green-500 text-lg font-medium">
-                              Correct
+                              በትክክል የተመለሱ
                             </p>
                             <p className="text-3xl font-bold text-green-800">
                               {player.correctAnswers}
@@ -143,7 +141,7 @@ const PlayerStatusModal = ({
 
                           <div className="bg-red-50 p-4 rounded-xl text-center">
                             <p className="text-red-500 text-lg font-medium">
-                              Incorrect
+                              በትክክል ያልተመለሱ
                             </p>
                             <p className="text-3xl font-bold text-red-800">
                               {player.questionsAnswered.length -
@@ -191,9 +189,9 @@ const PlayerStatusModal = ({
                       {/* Score - Column 6 */}
                       <div className="md:col-span-1 flex items-center justify-center">
                         <div className="bg-blue-600 text-white px-6 py-8 rounded-xl text-center">
-                          <p className="text-xl text-blue-100 mb-1">SCORE</p>
+                          <p className="text-xl text-blue-100 mb-1">ነጥብ</p>
                           <p className="text-5xl font-bold">{player.score}</p>
-                          <p className="text-xl text-blue-100">points</p>
+                          <p className="text-xl text-blue-100">ነጥቦች</p>
                         </div>
                       </div>
                     </div>
