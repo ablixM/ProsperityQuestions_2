@@ -56,7 +56,7 @@ export const useGameStore = create<GameState>()(
       currentPlayerId: null,
       completedNumbers: [],
       questionAnswers: {},
-      totalQuestions: 57, // Updated to match the total number of questions in questions.ts
+      totalQuestions: 60, // Updated to match the total number of questions in questions.ts
       tieBreakers: [],
 
       addPlayer: (

@@ -19,6 +19,13 @@ const NumberGrid: FC<NumberGridProps> = ({
 }) => {
   const currentPlayer = useGameStore((state) => state.getCurrentPlayer());
 
+  const getMaxQuestionsPerPlayer = useGameStore(
+    (state) => state.getMaxQuestionsPerPlayer
+  );
+  const hasPlayerReachedMaxQuestions = useGameStore(
+    (state) => state.hasPlayerReachedMaxQuestions
+  );
+
   // Generate numbers array from 1 to totalNumbers
   const numbers = Array.from({ length: totalNumbers }, (_, i) => i + 1);
 
@@ -26,6 +33,12 @@ const NumberGrid: FC<NumberGridProps> = ({
   const getGridCols = () => {
     return "grid-cols-3 md:grid-cols-66 lg:grid-cols-10";
   };
+
+  // Calculate player's question limit
+  const playerQuestionLimit = currentPlayer ? getMaxQuestionsPerPlayer() : 0;
+  const isPlayerInTieBreaker = currentPlayer
+    ? hasPlayerReachedMaxQuestions(currentPlayer.id)
+    : false;
 
   return (
     <div className="w-full flex flex-col lg:flex-row gap-8">
@@ -68,7 +81,8 @@ const NumberGrid: FC<NumberGridProps> = ({
               <div className="bg-blue-50 p-4 rounded-xl text-center">
                 <p className="text-blue-500 text-lg font-medium">ጥያቄዎች</p>
                 <p className="text-2xl font-bold text-blue-800">
-                  {currentPlayer.questionsAnswered.length}/{totalNumbers}
+                  {currentPlayer.questionsAnswered.length}/{playerQuestionLimit}
+                  {isPlayerInTieBreaker && " + ታይ"}
                 </p>
               </div>
               <div className="bg-green-50 p-4 rounded-xl text-center">

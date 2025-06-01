@@ -1,6 +1,7 @@
 import { Button } from "./ui/button";
 import { Trophy, Users, X, User } from "lucide-react";
 import { Player } from "../store/gameStore";
+import { useGameStore } from "../store/gameStore";
 
 // Props interface for the PlayerStatusModal
 export interface PlayerStatusModalProps {
@@ -15,9 +16,16 @@ const PlayerStatusModal = ({
   isOpen,
   onClose,
   allPlayers,
-  totalQuestions,
 }: PlayerStatusModalProps) => {
   if (!isOpen) return null;
+
+  // Get game store functions
+  const getMaxQuestionsPerPlayer = useGameStore(
+    (state) => state.getMaxQuestionsPerPlayer
+  );
+  const hasPlayerReachedMaxQuestions = useGameStore(
+    (state) => state.hasPlayerReachedMaxQuestions
+  );
 
   // Sort players by score (highest to lowest)
   const sortedPlayers = [...allPlayers].sort((a, b) => b.score - a.score);
@@ -59,10 +67,14 @@ const PlayerStatusModal = ({
               {sortedPlayers.map((player, index) => {
                 const rank = index + 1;
                 const isTopThree = rank <= 3;
+                const playerQuestionLimit = getMaxQuestionsPerPlayer();
+                const isPlayerInTieBreaker = hasPlayerReachedMaxQuestions(
+                  player.id
+                );
 
-                // Calculate percentage of answered questions
+                // Calculate percentage of answered questions based on player's limit
                 const answeredPercentage = Math.round(
-                  (player.questionsAnswered.length / totalQuestions) * 100
+                  (player.questionsAnswered.length / playerQuestionLimit) * 100
                 );
 
                 return (
@@ -126,7 +138,9 @@ const PlayerStatusModal = ({
                               ጥያቄዎች
                             </p>
                             <p className="text-3xl font-bold text-blue-800">
-                              {player.questionsAnswered.length}/{totalQuestions}
+                              {player.questionsAnswered.length}/
+                              {playerQuestionLimit}
+                              {isPlayerInTieBreaker && " + መለይ"}
                             </p>
                           </div>
 
@@ -191,7 +205,6 @@ const PlayerStatusModal = ({
                         <div className="bg-blue-600 text-white px-6 py-8 rounded-xl text-center">
                           <p className="text-xl text-blue-100 mb-1">ነጥብ</p>
                           <p className="text-5xl font-bold">{player.score}</p>
-                          <p className="text-xl text-blue-100">ነጥቦች</p>
                         </div>
                       </div>
                     </div>

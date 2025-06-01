@@ -26,10 +26,18 @@ const QuestionPage = () => {
     markQuestionAsCompleted,
     isQuestionCompleted,
     getCurrentPlayer,
-    totalQuestions,
+
+    getMaxQuestionsPerPlayer,
+    hasPlayerReachedMaxQuestions,
   } = useGameStore();
 
   const currentPlayer = getCurrentPlayer();
+
+  // Calculate player's question limit
+  const playerQuestionLimit = currentPlayer ? getMaxQuestionsPerPlayer() : 0;
+  const isPlayerInTieBreaker = currentPlayer
+    ? hasPlayerReachedMaxQuestions(currentPlayer.id)
+    : false;
 
   // Get the question data
   const question = questionsData[questionNumber - 1] || null;
@@ -322,7 +330,8 @@ const QuestionPage = () => {
                       </p>
                       <p className="text-2xl font-bold text-purple-800">
                         {currentPlayer.questionsAnswered.length}/
-                        {totalQuestions}
+                        {playerQuestionLimit}
+                        {isPlayerInTieBreaker && " + መለይ"}
                       </p>
                     </div>
                   </div>
@@ -342,7 +351,7 @@ const QuestionPage = () => {
               {isPreviouslyAnswered && (
                 <div className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xl font-medium flex items-center">
                   <CheckCircle2 className="w-6 h-6 mr-2" />
-                  Previously Answered
+                  አስቀድሞ የተመለሰ
                 </div>
               )}
 
@@ -351,7 +360,7 @@ const QuestionPage = () => {
                 !isAnswered && (
                   <div className="bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-xl font-medium flex items-center">
                     <AlertTriangle className="w-6 h-6 mr-2" />
-                    Attempts: {incorrectAttempts}/3
+                    ሙከራዎች: {incorrectAttempts}/3
                   </div>
                 )}
             </div>
