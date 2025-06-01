@@ -493,7 +493,7 @@ const QuestionPage = () => {
               <div className="bg-white rounded-2xl shadow-xl p-8 h-full flex flex-col">
                 {/* Timer Component */}
                 <CountdownTimer
-                  duration={45}
+                  duration={30}
                   isRunning={timerRunning}
                   forceStop={forceStopTimer}
                   onTimeUp={handleTimeUp}
@@ -543,7 +543,8 @@ const QuestionPage = () => {
                     />
                   </div>
                   <h2 className="text-center font-bold text-2xl mt-4">
-                    በየካ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅም ግንባታ ዘርፍ የተዘጋጀ
+                    በየካ ክፍለ ከተማከተማ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅምናና ግንባታ ዘርፍ
+                    የተዘጋጀ
                   </h2>
                 </div>
               </div>

@@ -9,7 +9,7 @@ function LandingHeader() {
               <img src="/image.png" alt="" />
             </div>
             <div className="flex flex-col items-center text-4xl">
-              በየካ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅም ግንባታ ዘርፍ የተዘጋጀ
+              በየካ ክፍለ ከተማከተማ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅምናና ግንባታ ዘርፍ የተዘጋጀ
             </div>
           </div>
         </div>

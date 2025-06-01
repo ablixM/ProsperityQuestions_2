@@ -57,15 +57,13 @@ function HomePage() {
       {/* Hero Section */}
       <section className="flex-grow flex items-center justify-center py-12 px-8">
         <div className="container mx-auto relative">
-          {/* Floating Elements */}
-          <div className="absolute z-0 -top-20 left-1/4 w-44 h-44 rounded-full bg-blue-100 opacity-70 animate-pulse"></div>
-          <div className="absolute z-0 top-60 right-1/4 w-32 h-32 rounded-full bg-blue-200 opacity-60 animate-pulse delay-300"></div>
-          <div className="absolute z-0 bottom-20 left-20 w-48 h-48 rounded-full bg-blue-100 opacity-50 animate-pulse delay-700"></div>
-
           <div className="max-w-6xl mx-auto text-center">
+            <p className="text-4xl border border-blue-600 p-2 bg-blue-200 rounded-lg">
+              የአስተሳሰብና የተግባር አንድነት ለጠንካራ ፓርቲ
+            </p>
             <h1 className="text-6xl md:text-7xl font-bold text-blue-900 mb-12 z-50 leading-tight">
-              በየካ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅም ግንባታ ዘርፍ የተዘጋጀ የጥያቄና መልስ ውድድር
-              መድረክ የተዘጋጁ ጥያቄዎች
+              በየካ ክፍለ ከተማከተማ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅምናና ግንባታ ዘርፍ የተዘጋጀ
+              የጥያቄና መልስ ውድድር መድረክ የተዘጋጁ ጥያቄዎች
             </h1>
 
             {/* Player Management Section */}

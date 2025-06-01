@@ -16,7 +16,7 @@ interface CountdownTimerProps {
 }
 
 const CountdownTimer: FC<CountdownTimerProps> = ({
-  duration = 45,
+  duration = 30,
   isRunning,
   onTimeUp,
   onStart,
