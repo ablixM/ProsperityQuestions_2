@@ -194,6 +194,32 @@ const PlayerStatusModal = ({
                           </div>
                         </div>
 
+                        {/* Question Numbers */}
+                        <div className="mt-4">
+                          <p className="text-lg text-gray-600 mb-2">
+                            Answered Questions:
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {player.questionsAnswered.map(
+                              (questionId, index) => {
+                                const isCorrect = player.correctAnswers > index;
+                                return (
+                                  <div
+                                    key={questionId}
+                                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                      isCorrect
+                                        ? "bg-green-100 text-green-800"
+                                        : "bg-red-100 text-red-800"
+                                    }`}
+                                  >
+                                    Q{questionId}
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        </div>
+
                         {/* Accuracy */}
                         <div className="mt-4">
                           <p className="text-lg text-gray-600">
