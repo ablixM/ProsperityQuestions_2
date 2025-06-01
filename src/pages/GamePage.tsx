@@ -170,7 +170,7 @@ function GamePage() {
           </div>
 
           <div className="relative bg-white rounded-2xl shadow-xl p-10">
-            {availableQuestions.length === 0 && (
+            {availableQuestions.length === 0 && tieBreakers.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-10 rounded-xl">
                 <div className="text-center p-8">
                   <h3 className="text-3xl font-bold text-gray-800 mb-4">

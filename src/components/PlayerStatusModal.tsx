@@ -152,7 +152,7 @@ const PlayerStatusModal = ({
                             <p className="text-3xl font-bold text-blue-800">
                               {player.questionsAnswered.length}/
                               {playerQuestionLimit}
-                              {isPlayerInTieBreaker && " + መለይ"}
+                              {isPlayerInTieBreaker}
                             </p>
                           </div>
 

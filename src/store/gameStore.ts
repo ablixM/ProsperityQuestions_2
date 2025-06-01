@@ -234,12 +234,15 @@ export const useGameStore = create<GameState>()(
           (qNum) => !get().completedNumbers.includes(qNum)
         );
 
+        // Get available tiebreaker questions
+        const availableTieBreakers = unansweredQuestions.filter((qNum) =>
+          get().isTieBreakerQuestion(qNum)
+        );
+
         // Check if player has reached their max questions
         if (get().hasPlayerReachedMaxQuestions(currentPlayer.id)) {
           // If player has reached max, they can only answer tie breaker questions
-          return unansweredQuestions.filter((qNum) =>
-            get().isTieBreakerQuestion(qNum)
-          );
+          return availableTieBreakers;
         }
 
         // If player hasn't reached max, they can answer any unanswered question
