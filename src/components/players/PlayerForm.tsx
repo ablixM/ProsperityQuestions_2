@@ -118,7 +118,7 @@ const PlayerForm = () => {
               htmlFor="playerName"
               className="block text-lg font-medium text-gray-700 mb-2"
             >
-              የተጫዋች ስም
+              የተወዳዳሪ ስም
             </label>
             <input
               type="text"
@@ -126,7 +126,7 @@ const PlayerForm = () => {
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="የተጫዋች ስም ይሙሉ"
+              placeholder="የተወዳዳሪ ስም ይሙሉ"
               required
             />
           </div>
@@ -158,7 +158,7 @@ const PlayerForm = () => {
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white text-xl px-8 py-4 h-auto rounded-xl w-full md:w-auto"
             >
-              ተጫዋች ጨምር
+              ተወዳዳሪ ጨምር
             </Button>
           </div>
         </div>

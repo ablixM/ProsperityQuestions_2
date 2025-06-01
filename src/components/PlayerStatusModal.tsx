@@ -36,7 +36,7 @@ const PlayerStatusModal = ({
         <div className="bg-blue-600 p-6 flex justify-between items-center">
           <h2 className="text-4xl font-bold text-white flex items-center">
             <Users className="w-10 h-10 mr-4" />
-            የተጫዋች ደረጃ
+            የተወዳዳሪ ደረጃ
           </h2>
           <Button
             variant="ghost"
@@ -52,7 +52,7 @@ const PlayerStatusModal = ({
           {sortedPlayers.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full">
               <Users className="w-20 h-20 text-gray-400 mb-4" />
-              <p className="text-3xl text-gray-500">ተጫዋቾች አልግቡም</p>
+              <p className="text-3xl text-gray-500">ተወዳዳሪዎች አልገቡም</p>
             </div>
           ) : (
             <div className="space-y-6">
@@ -123,7 +123,7 @@ const PlayerStatusModal = ({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                           <div className="bg-blue-50 p-4 rounded-xl text-center">
                             <p className="text-blue-500 text-lg font-medium">
-                              ጥያቄዎችጥያቄዎች
+                              ጥያቄዎች
                             </p>
                             <p className="text-3xl font-bold text-blue-800">
                               {player.questionsAnswered.length}/{totalQuestions}

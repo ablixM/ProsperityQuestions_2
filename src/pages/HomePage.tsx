@@ -50,7 +50,7 @@ function HomePage() {
           className="bg-blue-600 hover:bg-blue-700 text-white text-xl px-6 py-6 h-auto rounded-xl"
         >
           <BarChart className="w-6 h-6 mr-2" />
-          የተጫዋች ደረጃ ተመልከት
+          የተወዳዳሪ ደረጃ ተመልከት
         </Button>
       </header>
 
@@ -73,7 +73,7 @@ function HomePage() {
               <div className="flex items-center justify-center mb-10">
                 <Users className="w-8 h-8 text-blue-600 mr-3" />
                 <h2 className="text-4xl font-bold text-gray-800">
-                  የተወዳዳሪ መቆጣጠሪያመቆጣጠሪያ
+                  የተወዳዳሪ መቆጣጠሪያ
                 </h2>
               </div>
 

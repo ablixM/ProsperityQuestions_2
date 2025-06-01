@@ -21,7 +21,7 @@ const PlayerList = () => {
     return (
       <div className="text-center py-8 bg-blue-50 rounded-xl border border-blue-200">
         <p className="text-xl text-blue-800">
-          የተጫዋች ስም አልገባም። ጨዋታዉን ለመጀመር ትጫዋች ይጨምሩ።
+          የተወዳዳሪ ስም አልገባም። ውድድሩን ለመጀመር ተጫዋች ይጨምሩ።
         </p>
       </div>
     );
