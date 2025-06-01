@@ -56,7 +56,7 @@ export const useGameStore = create<GameState>()(
       currentPlayerId: null,
       completedNumbers: [],
       questionAnswers: {},
-      totalQuestions: 60, // Updated to match the total number of questions in questions.ts
+      totalQuestions: 80, // Updated to match the total number of questions in questions.ts
       tieBreakers: [],
 
       addPlayer: (
@@ -185,13 +185,20 @@ export const useGameStore = create<GameState>()(
       },
 
       resetGame: () => {
-        set({
-          players: [],
+        set((state) => ({
+          ...state,
           currentPlayerId: null,
           completedNumbers: [],
           questionAnswers: {},
           tieBreakers: [],
-        });
+          players: state.players.map((player) => ({
+            ...player,
+            questionsAnswered: [],
+            correctAnswers: 0,
+            incorrectAnswers: 0,
+            score: 0,
+          })),
+        }));
       },
 
       isQuestionCompleted: (questionNumber: number) => {

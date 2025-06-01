@@ -30,6 +30,18 @@ const PlayerStatusModal = ({
   // Sort players by score (highest to lowest)
   const sortedPlayers = [...allPlayers].sort((a, b) => b.score - a.score);
 
+  // Calculate ranks with ties
+  const playerRanks = sortedPlayers.reduce((acc, player, index) => {
+    if (index === 0) {
+      acc[player.id] = 1;
+    } else {
+      const prevPlayer = sortedPlayers[index - 1];
+      acc[player.id] =
+        player.score === prevPlayer.score ? acc[prevPlayer.id] : index + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
   // Medal colors for top 3 ranks
   const medalColors: Record<number, string> = {
     1: "bg-amber-400", // Gold
@@ -64,8 +76,8 @@ const PlayerStatusModal = ({
             </div>
           ) : (
             <div className="space-y-6">
-              {sortedPlayers.map((player, index) => {
-                const rank = index + 1;
+              {sortedPlayers.map((player) => {
+                const rank = playerRanks[player.id];
                 const isTopThree = rank <= 3;
                 const playerQuestionLimit = getMaxQuestionsPerPlayer();
                 const isPlayerInTieBreaker = hasPlayerReachedMaxQuestions(
