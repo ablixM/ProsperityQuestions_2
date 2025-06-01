@@ -157,57 +157,7 @@ function GamePage() {
         ወደ ተጫዋች ዝርዝር ተመለስ
       </Button>
 
-      <div className=" mx-auto max-w-7xl">
-        {/* Player Info
-        <div className="mb-8">
-          <PlayerCard player={currentPlayer} />
-        </div> */}
-
-        {/* Question Allocation Info */}
-        {/* <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
-          <div className="flex items-start">
-            <Info className="w-8 h-8 text-blue-600 mr-3 mt-1 flex-shrink-0" />
-            <div>
-              <h3 className="text-xl font-semibold text-blue-800 mb-2">
-                Question Allocation
-              </h3>
-              <p className="text-blue-700 mb-3">
-                Each player can answer up to{" "}
-                <strong>{maxQuestionsPerPlayer}</strong> regular questions. You
-                have answered <strong>{regularQuestionsAnswered}</strong> of
-                your {maxQuestionsPerPlayer} questions.
-              </p>
-
-              {tieBreakers.length > 0 && (
-                <div className="mb-3">
-                  <p className="text-blue-700">
-                    <strong>Tie Breaker Questions:</strong> Questions{" "}
-                    {tieBreakers.join(", ")} are tie breakers that any player
-                    can answer even after reaching their maximum.
-                  </p>
-                  {tieBreakerQuestionsAnswered > 0 && (
-                    <p className="text-blue-700 mt-1">
-                      You've answered{" "}
-                      <strong>{tieBreakerQuestionsAnswered}</strong> tie breaker
-                      question(s).
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {hasReachedMax && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-2">
-                  <p className="text-amber-700 font-medium flex items-center">
-                    <Award className="w-5 h-5 mr-2" />
-                    You've reached your maximum regular questions. You can only
-                    answer tie breaker questions now.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div> */}
-
+      <div className=" mx-auto max-w-9xl">
         {/* Game Content */}
         <div className="mb-10">
           <div className="flex items-center justify-center mb-8">
@@ -224,10 +174,10 @@ function GamePage() {
               <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-10 rounded-xl">
                 <div className="text-center p-8">
                   <h3 className="text-3xl font-bold text-gray-800 mb-4">
-                    ሁሉም ጥያቄዎች ተመልሰዋልተመልሰዋል
+                    ሁሉም ጥያቄዎች ተመልሰዋል
                   </h3>
                   <p className="text-2xl text-gray-600 mb-6">
-                    ተጫዋቹ ሁሉንም ጥያቄዎች መልሷልመልሷል
+                    ተጫዋቹ ሁሉንም ጥያቄዎች መልሷል
                   </p>
                   <Button
                     onClick={handleBackToHome}

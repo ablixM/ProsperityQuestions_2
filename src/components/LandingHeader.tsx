@@ -24,16 +24,6 @@ function LandingHeader() {
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/"
-              className="font-medium hover:text-blue-200 transition-colors"
-            >
-              Home
-            </Link>
-          </nav>
-
           {/* Mobile Menu Button */}
           <Button
             variant="ghost"

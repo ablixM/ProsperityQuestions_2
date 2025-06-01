@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   Eye,
   X,
+  User,
 } from "lucide-react";
 import { questionsData } from "../data/questions";
 import { useGameStore } from "../store/gameStore";
@@ -21,8 +22,12 @@ const QuestionPage = () => {
   const questionNumber = parseInt(questionId || "0", 10);
 
   // Global state from Zustand
-  const { markQuestionAsCompleted, isQuestionCompleted, getCurrentPlayer } =
-    useGameStore();
+  const {
+    markQuestionAsCompleted,
+    isQuestionCompleted,
+    getCurrentPlayer,
+    totalQuestions,
+  } = useGameStore();
 
   const currentPlayer = getCurrentPlayer();
 
@@ -253,7 +258,7 @@ const QuestionPage = () => {
         </div>
       )}
 
-      <div className="container mx-auto max-w-7xl">
+      <div className="container mx-auto max-w-9xl">
         {/* Top bar with navigation */}
         <div className="mb-8">
           <Button
@@ -266,9 +271,68 @@ const QuestionPage = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Question Card - Takes 3/4 of the space on large screens */}
-          <div className="lg:col-span-3 bg-white rounded-2xl shadow-xl p-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Player Profile Card - Takes 2 columns on large screens */}
+          {currentPlayer && !isPreviouslyAnswered && (
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-8">
+                <div className="flex flex-col items-center">
+                  {/* Profile Image */}
+                  <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-200 flex items-center justify-center bg-blue-50 mb-4">
+                    {currentPlayer.profileImage ? (
+                      <img
+                        src={currentPlayer.profileImage}
+                        alt={`${currentPlayer.name}'s profile`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-16 h-16 text-blue-400" />
+                    )}
+                  </div>
+
+                  {/* Player Name */}
+                  <h3 className="text-2xl font-bold text-blue-900 mb-2">
+                    {currentPlayer.name}
+                  </h3>
+
+                  {/* Woreda Badge */}
+                  {currentPlayer.woreda && (
+                    <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-lg font-bold mb-4">
+                      ወረዳ {currentPlayer.woreda}
+                    </div>
+                  )}
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-1 gap-4 w-full mt-4">
+                    <div className="bg-blue-50 p-3 rounded-xl text-center">
+                      <p className="text-blue-500 text-sm font-medium">ነጥቦች</p>
+                      <p className="text-2xl font-bold text-blue-800">
+                        {currentPlayer.score}
+                      </p>
+                    </div>
+                    <div className="bg-green-50 p-3 rounded-xl text-center">
+                      <p className="text-green-500 text-sm font-medium">ትክክል</p>
+                      <p className="text-2xl font-bold text-green-800">
+                        {currentPlayer.correctAnswers}
+                      </p>
+                    </div>
+                    <div className="bg-purple-50 p-3 rounded-xl text-center">
+                      <p className="text-purple-500 text-sm font-medium">
+                        ጥያቄዎች
+                      </p>
+                      <p className="text-2xl font-bold text-purple-800">
+                        {currentPlayer.questionsAnswered.length}/
+                        {totalQuestions}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Question Card - Takes 7 columns on large screens */}
+          <div className="lg:col-span-7 bg-white rounded-2xl shadow-xl p-10">
             {/* Question Number */}
             <div className="mb-8 flex justify-between items-center">
               <h2 className="text-4xl font-bold text-blue-900">
@@ -304,7 +368,6 @@ const QuestionPage = () => {
               <h3 className="text-3xl font-medium text-blue-900 mb-6">ምርጫ</h3>
               <div className="grid grid-cols-1 gap-6">
                 {question.options.map((option, index) => {
-                  // Determine styling based on selection and answer state
                   const isSelected = selectedAnswerIndex === index;
                   const isCorrectAnswer = question.correctAnswer === index;
                   const isIncorrectSelected = incorrectAnswers.includes(index);
@@ -312,13 +375,10 @@ const QuestionPage = () => {
                   let optionClass =
                     "border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-50";
 
-                  // Style for incorrect answers (already attempted)
                   if (isIncorrectSelected) {
                     optionClass =
                       "border-2 border-red-400 bg-red-50 opacity-60";
-                  }
-                  // Only highlight the correct answer if we should show it
-                  else if (isAnswered && showCorrectAnswer) {
+                  } else if (isAnswered && showCorrectAnswer) {
                     if (isSelected && isCorrect) {
                       optionClass = "border-2 border-green-500 bg-green-50";
                     } else if (isSelected && !isCorrect) {
@@ -334,9 +394,7 @@ const QuestionPage = () => {
                     <button
                       key={index}
                       onClick={() => {
-                        // First stop the timer
                         setForceStopTimer(true);
-                        // Then handle the answer
                         handleAnswerSelect(index);
                       }}
                       className={`p-6 rounded-xl text-left transition-all ${optionClass} ${
@@ -374,7 +432,7 @@ const QuestionPage = () => {
               </div>
             </div>
 
-            {/* Status Messages - Only show for Time's up or final results, removed incorrect feedback */}
+            {/* Status Messages */}
             {timeIsUp && (
               <div className="p-6 bg-red-50 text-red-600 rounded-xl text-center text-2xl font-medium mb-8">
                 <div className="flex items-center justify-center">
@@ -396,12 +454,11 @@ const QuestionPage = () => {
             {isAnswered &&
               isCorrect === false &&
               showCorrectAnswer &&
-              !timeIsUp &&
-              incorrectAttempts > 0 && (
+              !timeIsUp && (
                 <div className="p-6 bg-red-50 text-red-600 rounded-xl text-center text-2xl font-medium mb-8">
                   <div className="flex items-center justify-center">
                     <XCircle className="w-8 h-8 mr-3" />
-                    ጥያቄው በትክክል አልተመለሰምአልተመለሰም!
+                    ጥያቄው በትክክል አልተመለሰም!
                   </div>
                 </div>
               )}
@@ -421,11 +478,11 @@ const QuestionPage = () => {
             )}
           </div>
 
-          {/* Timer Card - Takes 1/4 of the space on large screens */}
-          <div className="lg:col-span- flex flex-col items-center">
+          {/* Timer Card - Takes 3 columns on large screens */}
+          <div className="lg:col-span-3">
             {!isPreviouslyAnswered && (
               <div className="bg-white rounded-2xl shadow-xl p-8 h-full flex flex-col">
-                {/* Replace the old timer implementation with CountdownTimer component */}
+                {/* Timer Component */}
                 <CountdownTimer
                   duration={45}
                   isRunning={timerRunning}
@@ -468,13 +525,15 @@ const QuestionPage = () => {
                   </div>
                 )}
 
-                <div className="flex flex-col items-center justify-center w-full p-4">
-                  <div className="w-48 h-48 bg-amber-200 flex items-center justify-center ">
-                    <img src="/image.png" alt="" />
+                <div className="flex flex-col items-center justify-center w-full p-4 mt-6">
+                  <div className="w-48 h-48 bg-amber-200 flex items-center justify-center rounded-xl">
+                    <img
+                      src="/image.png"
+                      alt=""
+                      className="w-full h-full object-cover rounded-xl"
+                    />
                   </div>
-                </div>
-                <div className="flex">
-                  <h2 className="text-center font-bold text-2xl">
+                  <h2 className="text-center font-bold text-2xl mt-4">
                     በየካ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅም ግንባታ ዘርፍ የተዘጋጀ
                   </h2>
                 </div>
@@ -485,7 +544,7 @@ const QuestionPage = () => {
               <div className="bg-green-50 border-2 border-green-200 rounded-2xl shadow-lg p-8 h-full flex flex-col items-center justify-center">
                 <CheckCircle2 className="w-20 h-20 text-green-500 mb-4" />
                 <h3 className="text-2xl font-bold text-center text-green-700 mb-2">
-                  ጥያቄው ተመልሷልተመልሷል
+                  ጥያቄው ተመልሷል
                 </h3>
                 <p className="text-center text-green-600 text-lg">
                   ሁሉንም ጥያቄ መልሰዋል

@@ -31,21 +31,28 @@ const PlayerForm = () => {
     reader.readAsDataURL(file);
   };
 
-  const formatWoreda = (value: string) => {
-    // Extract only numbers
-    const numbers = value.replace(/\D/g, "");
-
-    // Limit to 2 digits and pad with leading zero if needed
-    if (numbers.length > 0) {
-      const paddedNumber = numbers.slice(0, 2).padStart(2, "0");
-      return paddedNumber;
-    }
-    return "";
-  };
-
   const handleWoredaChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const formattedWoreda = formatWoreda(e.target.value);
-    setWoreda(formattedWoreda);
+    const value = e.target.value;
+
+    // Allow empty value
+    if (!value) {
+      setWoreda("");
+      return;
+    }
+
+    // Only allow numbers
+    if (!/^\d*$/.test(value)) {
+      return;
+    }
+
+    // Limit to 2 digits
+    const number = parseInt(value, 10);
+    if (number > 99) {
+      return;
+    }
+
+    // Don't pad with zero if the user is typing
+    setWoreda(value);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -119,7 +126,7 @@ const PlayerForm = () => {
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter player name"
+              placeholder="የተጫዋች ስም ይሙሉ"
               required
             />
           </div>
@@ -138,8 +145,10 @@ const PlayerForm = () => {
               value={woreda}
               onChange={handleWoredaChange}
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="01, 02, etc."
+              placeholder="01, 02,."
               maxLength={2}
+              inputMode="numeric"
+              pattern="[0-9]*"
             />
           </div>
 
