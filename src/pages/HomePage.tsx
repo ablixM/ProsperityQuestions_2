@@ -59,7 +59,7 @@ function HomePage() {
       {/* Hero Section */}
       <section className="flex-grow flex items-center justify-center py-2 px-8">
         <div className="container mx-auto relative">
-          <div className="max-w-6xl mx-auto text-center">
+          <div className="max-w-7xl mx-auto text-center">
             <p className="text-4xl p-2 bg-blue-200/20 rounded-lg">
               የአስተሳሰብና የተግባር አንድነት ለጠንካራ ፓርቲ
             </p>
