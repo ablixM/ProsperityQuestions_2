@@ -33,25 +33,6 @@ const PlayerForm = () => {
 
   const handleWoredaChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-
-    // Allow empty value
-    if (!value) {
-      setWoreda("");
-      return;
-    }
-
-    // Only allow numbers
-    if (!/^\d*$/.test(value)) {
-      return;
-    }
-
-    // Limit to 2 digits
-    const number = parseInt(value, 10);
-    if (number > 99) {
-      return;
-    }
-
-    // Don't pad with zero if the user is typing
     setWoreda(value);
   };
 
@@ -137,7 +118,7 @@ const PlayerForm = () => {
               htmlFor="woreda"
               className="block text-lg font-medium text-gray-700 mb-2"
             >
-              ወረዳ
+              ክፍለ ከተማ
             </label>
             <input
               type="text"
@@ -145,11 +126,8 @@ const PlayerForm = () => {
               value={woreda}
               onChange={handleWoredaChange}
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="01, 02,."
-              maxLength={2}
+              placeholder="ክፍለ ከተማ"
               required
-              inputMode="numeric"
-              pattern="[0-9]*"
             />
           </div>
 

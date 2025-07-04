@@ -133,7 +133,7 @@ const PlayerStatusModal = ({
                         {/* Woreda Badge */}
                         {player.woreda && (
                           <div className="mt-3 bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-bold text-lg">
-                            ወረዳ {player.woreda}
+                            ክፍለ ከተማ {player.woreda}
                           </div>
                         )}
                       </div>

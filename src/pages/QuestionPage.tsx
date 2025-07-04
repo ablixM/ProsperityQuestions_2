@@ -306,7 +306,7 @@ const QuestionPage = () => {
                   {/* Woreda Badge */}
                   {currentPlayer.woreda && (
                     <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-lg font-bold mb-4">
-                      ወረዳ {currentPlayer.woreda}
+                      ክፍለ ከተማ፡ {currentPlayer.woreda}
                     </div>
                   )}
 
@@ -493,7 +493,7 @@ const QuestionPage = () => {
               <div className="bg-white rounded-2xl shadow-xl p-8 h-full flex flex-col">
                 {/* Timer Component */}
                 <CountdownTimer
-                  duration={30}
+                  duration={60}
                   isRunning={timerRunning}
                   forceStop={forceStopTimer}
                   onTimeUp={handleTimeUp}

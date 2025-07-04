@@ -67,7 +67,7 @@ const NumberGrid: FC<NumberGridProps> = ({
               <div className="flex flex-col w-full gap-3">
                 {currentPlayer.woreda && (
                   <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-xl font-bold">
-                    ወረዳ {currentPlayer.woreda}
+                    ክፍለ ከተማ፡ {currentPlayer.woreda}
                   </div>
                 )}
                 <div className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-xl font-bold">

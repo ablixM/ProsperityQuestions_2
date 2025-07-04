@@ -9,7 +9,7 @@ function LandingHeader() {
               <img src="/image.png" alt="" />
             </div>
             <div className="flex flex-col items-center text-4xl">
-              በየካ ክፍለ ከተማ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅምና ግንባታ ዘርፍ የተዘጋጀ
+              በበልፅግና ፓርቲ የአዲስ አበባ ቅርንጫፍ ፅ/ቤት የፖለቲካ አቅምና ግንባታ ዘርፍ የተዘጋጀ
             </div>
           </div>
         </div>

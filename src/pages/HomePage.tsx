@@ -64,8 +64,8 @@ function HomePage() {
               የአስተሳሰብና የተግባር አንድነት ለጠንካራ ፓርቲ
             </p>
             <h1 className="text-6xl md:text-7xl font-bold text-blue-900 mb-12 z-50 leading-tight">
-              በየካ ክፍለ ከተማ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅምና ግንባታ ዘርፍ የተዘጋጀ የጥያቄና
-              መልስ ውድድር መድረክ
+              በበልፅግና ፓርቲ የአዲስ አበባ ቅርንጫፍ ፅ/ቤት የፖለቲካ አቅምና ግንባታ ዘርፍ የተዘጋጀ የአሸናፊዎች
+              አሸናፊ የጥያቄና መልስ ውድድር መድረክ
             </h1>
 
             {/* Player Management Section */}

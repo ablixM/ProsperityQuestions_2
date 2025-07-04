@@ -68,7 +68,7 @@ const PlayerList = () => {
             {player.woreda && (
               <div className="mr-4">
                 <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full  text-2xl font-bold">
-                  ወረዳ {player.woreda}
+                  {player.woreda}
                 </div>
               </div>
             )}
