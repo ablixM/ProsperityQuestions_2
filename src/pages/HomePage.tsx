@@ -8,13 +8,27 @@ import { Users, BarChart } from "lucide-react";
 import PlayerStatusModal from "../components/PlayerStatusModal";
 
 function HomePage() {
-  const { resetGame, players, totalQuestions } = useGameStore();
+  const {
+    resetGame,
+    players,
+    totalQuestions,
+    currentRound,
+    roundOneState,
+    resetRoundTwo,
+  } = useGameStore();
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [showPlayerStatus, setShowPlayerStatus] = useState(false);
+  const [isResetRoundTwoDialogOpen, setIsResetRoundTwoDialogOpen] =
+    useState(false);
 
   const handleResetConfirm = () => {
     resetGame();
     setIsResetDialogOpen(false);
+  };
+
+  const handleResetRoundTwoConfirm = () => {
+    resetRoundTwo();
+    setIsResetRoundTwoDialogOpen(false);
   };
 
   const togglePlayerStatus = () => {
@@ -37,6 +51,18 @@ function HomePage() {
         variant="danger"
       />
 
+      {/* Reset Round Two Dialog */}
+      <ConfirmationDialog
+        isOpen={isResetRoundTwoDialogOpen}
+        onClose={() => setIsResetRoundTwoDialogOpen(false)}
+        title="Reset Round Two"
+        message="Are you sure you want to reset round two and return to round one? This will keep all round one data but clear round two progress."
+        confirmLabel="Reset Round Two"
+        cancelLabel="Cancel"
+        onConfirm={handleResetRoundTwoConfirm}
+        variant="danger"
+      />
+
       {/* Player Status Modal */}
       <PlayerStatusModal
         isOpen={showPlayerStatus}
@@ -46,7 +72,16 @@ function HomePage() {
       />
 
       {/* Header with Status Button */}
-      <header className="py-4 px-8 flex justify-end ">
+      <header className="py-4 px-8 flex justify-between items-center">
+        <div className="flex items-center">
+          {roundOneState && (
+            <div className="bg-white/20 px-4 py-2 rounded-full mr-4">
+              <span className="text-white font-medium text-lg">
+                Round {currentRound}
+              </span>
+            </div>
+          )}
+        </div>
         <Button
           onClick={togglePlayerStatus}
           className="bg-blue-600 hover:bg-blue-700 text-white text-xl px-6 py-6 h-auto rounded-xl"
@@ -90,9 +125,25 @@ function HomePage() {
                   <p className="text-xl text-gray-600 mb-6">
                     ጨዋታውን ለመጀመር የተጫዋች ስም ይምረጡ
                   </p>
+                  {roundOneState && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                      <p className="text-blue-800 font-medium">
+                        እዚህ ሩንድ {currentRound} ነው። ተወዳዳሪዎች እና ውጤቶች ለዚህ ሩንድ ብቻ
+                        ናቸው።
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
+              {currentRound === 2 && (
+                <button
+                  onClick={() => setIsResetRoundTwoDialogOpen(true)}
+                  className="mt-4 mr-4 text-orange-600 hover:text-orange-800 transition-colors text-lg underline underline-offset-4"
+                >
+                  ሩንድ ሁለትን ያጥፉ እና እንደገና ጀምሩ
+                </button>
+              )}
               <button
                 onClick={() => setIsResetDialogOpen(true)}
                 className="mt-10 text-red-600 hover:text-red-800 transition-colors text-xl underline underline-offset-4"

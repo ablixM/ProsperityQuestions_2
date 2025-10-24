@@ -60,7 +60,7 @@ const PlayerList = () => {
                 <span className="font-semibold">
                   {player.questionsAnswered.length}
                 </span>{" "}
-                ጥያቄዎች ተመልሰዋል
+                ጥያቄዎች ተጠይቀዋል
               </p>
             </div>
 

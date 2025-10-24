@@ -168,11 +168,7 @@ const QuestionPage = () => {
 
       setIncorrectAttempts((prev) => prev + 1);
       setShowIncorrectFeedback(true);
-      setFeedbackMessage(
-        `Incorrect! Try again! (${
-          3 - incorrectAttempts - 1
-        } attempts remaining)`
-      );
+      setFeedbackMessage(`ጥያቄው በትክክል አልተመለሰም! )`);
 
       // Check if this is the third incorrect attempt
       if (incorrectAttempts >= 2) {
@@ -212,7 +208,7 @@ const QuestionPage = () => {
   };
 
   const handleBackToGame = () => {
-    navigate("/game");
+    navigate("/");
   };
 
   const handleCloseResultDialog = () => {
@@ -256,6 +252,8 @@ const QuestionPage = () => {
                 <p className="text-lg font-medium">{feedbackMessage}</p>
               </div>
               <button
+                title="close"
+                type="button"
                 onClick={handleCloseFeedback}
                 className="ml-4 text-red-500 hover:text-red-700"
               >
@@ -275,7 +273,7 @@ const QuestionPage = () => {
             className="text-blue-600 text-xl"
           >
             <ChevronLeft className="w-6 h-6 mr-2" />
-            ውደ ጥያቄዎች ተመለስ
+            ወደ ተጫዋች ዝርዝር ተመለስ
           </Button>
         </div>
 
@@ -306,7 +304,7 @@ const QuestionPage = () => {
                   {/* Woreda Badge */}
                   {currentPlayer.woreda && (
                     <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-lg font-bold mb-4">
-                      ክፍለ ከተማ፡ {currentPlayer.woreda}
+                      የህብረት ስም፡ {currentPlayer.woreda}
                     </div>
                   )}
 

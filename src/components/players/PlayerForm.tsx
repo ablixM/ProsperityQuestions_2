@@ -15,13 +15,11 @@ const PlayerForm = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.match("image.*")) {
       alert("Please select an image file");
       return;
     }
 
-    // Convert to base64
     const reader = new FileReader();
     reader.onload = () => {
       const base64String = reader.result as string;
@@ -53,7 +51,6 @@ const PlayerForm = () => {
   return (
     <form onSubmit={handleSubmit} className="w-full  mx-auto space-y-6">
       <div className="flex flex-row w-full items-center justify-center gap-6">
-        {/* Profile Image Upload */}
         <div className="md:col-span-3 ml-10">
           <label className="block text-lg font-medium text-gray-700 mb-3">
             ፎቶ
@@ -74,6 +71,7 @@ const PlayerForm = () => {
               )}
             </div>
             <input
+              title="upload file"
               type="file"
               accept="image/*"
               className="hidden"
@@ -118,7 +116,7 @@ const PlayerForm = () => {
               htmlFor="woreda"
               className="block text-lg font-medium text-gray-700 mb-2"
             >
-              ክፍለ ከተማ
+              የህብረት ስም
             </label>
             <input
               type="text"
@@ -126,7 +124,7 @@ const PlayerForm = () => {
               value={woreda}
               onChange={handleWoredaChange}
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="ክፍለ ከተማ"
+              placeholder="የህብረት ስም"
               required
             />
           </div>
@@ -135,7 +133,7 @@ const PlayerForm = () => {
           <div className="pt-2">
             <Button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xl px-8 py-4 h-auto rounded-xl w-full md:w-auto"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xl px-8 py-4 h-auto  mt-6 rounded-xl w-full md:w-auto"
             >
               ተወዳዳሪ ጨምር
             </Button>

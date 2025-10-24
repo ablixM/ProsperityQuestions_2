@@ -13,6 +13,16 @@ export interface Player {
 }
 
 interface GameState {
+  // Round management
+  currentRound: 1 | 2;
+  roundOneState: {
+    players: Player[];
+    completedNumbers: number[];
+    questionAnswers: Record<number, number>;
+    tieBreakers: number[];
+  } | null;
+  roundTwoPlayers: string[]; // Player IDs selected for round two
+
   players: Player[];
   currentPlayerId: string | null;
   completedNumbers: number[];
@@ -27,12 +37,22 @@ interface GameState {
   getCurrentPlayer: () => Player | null;
   getPlayerRankings: () => Player[];
 
+  // Round management
+  startRoundTwo: (selectedPlayerIds: string[]) => void;
+  switchToRound: (round: 1 | 2) => void;
+  addPlayerToRoundTwo: (playerId: string) => void;
+  removePlayerFromRoundTwo: (playerId: string) => void;
+  getRoundTwoPlayers: () => Player[];
+  getRoundOnePlayers: () => Player[];
+  resetRoundTwo: () => void;
+
   // Game actions
   markQuestionAsCompleted: (
     questionNumber: number,
     answerIndex: number,
     isCorrect: boolean
   ) => void;
+  revertQuestion: (playerId: string, questionNumber: number) => void;
   resetGame: () => void;
   isQuestionCompleted: (questionNumber: number) => boolean;
   isQuestionCompletedByPlayer: (
@@ -52,6 +72,11 @@ interface GameState {
 export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
+      // Round management
+      currentRound: 1,
+      roundOneState: null,
+      roundTwoPlayers: [],
+
       players: [],
       currentPlayerId: null,
       completedNumbers: [],
@@ -185,20 +210,19 @@ export const useGameStore = create<GameState>()(
       },
 
       resetGame: () => {
-        set((state) => ({
-          ...state,
+        set({
+          // Round management
+          currentRound: 1,
+          roundOneState: null,
+          roundTwoPlayers: [],
+
+          players: [],
           currentPlayerId: null,
           completedNumbers: [],
           questionAnswers: {},
+          totalQuestions: 80, // Updated to match the total number of questions in questions.ts
           tieBreakers: [],
-          players: state.players.map((player) => ({
-            ...player,
-            questionsAnswered: [],
-            correctAnswers: 0,
-            incorrectAnswers: 0,
-            score: 0,
-          })),
-        }));
+        });
       },
 
       isQuestionCompleted: (questionNumber: number) => {
@@ -286,6 +310,172 @@ export const useGameStore = create<GameState>()(
         );
 
         set({ tieBreakers });
+      },
+
+      revertQuestion: (playerId: string, questionNumber: number) => {
+        set((state) => {
+          // Find the player
+          const playerIndex = state.players.findIndex((p) => p.id === playerId);
+          if (playerIndex === -1) return state;
+
+          const player = state.players[playerIndex];
+
+          // Check if the player has answered this question
+          const questionIndex =
+            player.questionsAnswered.indexOf(questionNumber);
+          if (questionIndex === -1) return state;
+
+          // Determine if the answer was correct based on the index
+          const isCorrect = player.correctAnswers > questionIndex;
+
+          // Remove the question from player's answered questions
+          const newQuestionsAnswered = player.questionsAnswered.filter(
+            (q) => q !== questionNumber
+          );
+
+          // Update player stats
+          const newCorrectAnswers = isCorrect
+            ? player.correctAnswers - 1
+            : player.correctAnswers;
+          const newIncorrectAnswers = isCorrect
+            ? player.incorrectAnswers
+            : player.incorrectAnswers - 1;
+          const newScore = isCorrect ? player.score - 10 : player.score;
+
+          // Keep the question as completed globally - don't make it available again
+          const newCompletedNumbers = state.completedNumbers;
+
+          // Keep the question answers record - don't remove it
+          const newQuestionAnswers = state.questionAnswers;
+
+          // Update player
+          const updatedPlayer = {
+            ...player,
+            questionsAnswered: newQuestionsAnswered,
+            correctAnswers: newCorrectAnswers,
+            incorrectAnswers: newIncorrectAnswers,
+            score: newScore,
+          };
+
+          const newPlayers = [...state.players];
+          newPlayers[playerIndex] = updatedPlayer;
+
+          return {
+            players: newPlayers,
+            completedNumbers: newCompletedNumbers,
+            questionAnswers: newQuestionAnswers,
+          };
+        });
+
+        // Recalculate tie breakers when questions are reverted
+        get().recalculateTieBreakers();
+      },
+
+      startRoundTwo: (selectedPlayerIds: string[]) => {
+        set((state) => {
+          // Save current round one state if not already saved
+          const roundOneState = state.roundOneState || {
+            players: [...state.players],
+            completedNumbers: [...state.completedNumbers],
+            questionAnswers: { ...state.questionAnswers },
+            tieBreakers: [...state.tieBreakers],
+          };
+
+          // Filter players for round two from the original round one players
+          const roundTwoPlayers = roundOneState.players.filter((player) =>
+            selectedPlayerIds.includes(player.id)
+          );
+
+          return {
+            currentRound: 2,
+            roundOneState,
+            roundTwoPlayers: selectedPlayerIds,
+            players: roundTwoPlayers,
+            currentPlayerId: null,
+            completedNumbers: [],
+            questionAnswers: {},
+            tieBreakers: [],
+          };
+        });
+
+        // Recalculate tie breakers for round two
+        get().recalculateTieBreakers();
+      },
+
+      switchToRound: (round: 1 | 2) => {
+        set((state) => {
+          if (round === 1 && state.roundOneState) {
+            return {
+              currentRound: 1,
+              players: [...state.roundOneState.players],
+              currentPlayerId: null,
+              completedNumbers: [...state.roundOneState.completedNumbers],
+              questionAnswers: { ...state.roundOneState.questionAnswers },
+              tieBreakers: [...state.roundOneState.tieBreakers],
+            };
+          } else if (round === 2) {
+            const roundTwoPlayers =
+              state.roundOneState?.players.filter((player) =>
+                state.roundTwoPlayers.includes(player.id)
+              ) || [];
+
+            return {
+              currentRound: 2,
+              players: roundTwoPlayers,
+              currentPlayerId: null,
+            };
+          }
+          return state;
+        });
+
+        // Recalculate tie breakers when switching rounds
+        get().recalculateTieBreakers();
+      },
+
+      addPlayerToRoundTwo: (playerId: string) => {
+        set((state) => ({
+          roundTwoPlayers: state.roundTwoPlayers.includes(playerId)
+            ? state.roundTwoPlayers
+            : [...state.roundTwoPlayers, playerId],
+        }));
+      },
+
+      removePlayerFromRoundTwo: (playerId: string) => {
+        set((state) => ({
+          roundTwoPlayers: state.roundTwoPlayers.filter(
+            (id) => id !== playerId
+          ),
+        }));
+      },
+
+      getRoundTwoPlayers: () => {
+        const state = get();
+        if (!state.roundOneState) return [];
+
+        return state.roundOneState.players.filter((player) =>
+          state.roundTwoPlayers.includes(player.id)
+        );
+      },
+
+      getRoundOnePlayers: () => {
+        const state = get();
+        return state.roundOneState?.players || [];
+      },
+
+      resetRoundTwo: () => {
+        set((state) => ({
+          currentRound: 1,
+          roundOneState: null,
+          roundTwoPlayers: [],
+          players: state.roundOneState?.players || [],
+          currentPlayerId: null,
+          completedNumbers: state.roundOneState?.completedNumbers || [],
+          questionAnswers: state.roundOneState?.questionAnswers || {},
+          tieBreakers: state.roundOneState?.tieBreakers || [],
+        }));
+
+        // Recalculate tie breakers
+        get().recalculateTieBreakers();
       },
 
       hasPlayerReachedMaxQuestions: (playerId: string) => {
