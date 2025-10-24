@@ -125,6 +125,19 @@ function GamePage() {
 
   const handleBackToHome = () => {
     navigate("/");
+    // Scroll to player list section with some offset
+    setTimeout(() => {
+      const playerListSection = document.querySelector(".player-list-section");
+      if (playerListSection) {
+        const elementPosition = playerListSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - 100; // Scroll a bit further up
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+      }
+    }, 100);
   };
 
   // If sounds aren't loaded yet, show a loading indicator

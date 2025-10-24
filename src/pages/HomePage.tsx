@@ -24,6 +24,10 @@ function HomePage() {
   const handleResetConfirm = () => {
     resetGame();
     setIsResetDialogOpen(false);
+    // Scroll to top when resetting game
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
   };
 
   const handleResetRoundTwoConfirm = () => {
@@ -104,7 +108,7 @@ function HomePage() {
             </h1>
 
             {/* Player Management Section */}
-            <div className="mt-16 bg-white rounded-2xl shadow-xl p-10 max-w-6xl mx-auto relative z-10">
+            <div className="mt-16 bg-white rounded-2xl shadow-xl p-10 max-w-6xl mx-auto relative z-10 player-list-section">
               <div className="flex items-center justify-center mb-10">
                 <Users className="w-8 h-8 text-blue-600 mr-3" />
                 <h2 className="text-4xl font-bold text-gray-800">

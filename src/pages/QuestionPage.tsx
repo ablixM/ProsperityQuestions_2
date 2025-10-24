@@ -209,10 +209,18 @@ const QuestionPage = () => {
 
   const handleBackToGame = () => {
     navigate("/");
+    // Scroll to top when going back to number grid
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
   };
 
   const handleCloseResultDialog = () => {
     setShowResultDialog(false);
+    // Scroll to top when going back to number grid after answering
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
   };
 
   const handleCloseFeedback = () => {
