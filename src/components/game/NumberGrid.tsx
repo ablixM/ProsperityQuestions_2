@@ -41,13 +41,13 @@ const NumberGrid: FC<NumberGridProps> = ({
     : false;
 
   return (
-    <div className="w-full flex flex-col lg:flex-row gap-8">
+    <div className="w-full flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8">
       {/* Player Info Section */}
       {currentPlayer && (
-        <div className="bg-white rounded-2xl shadow-xl p-6 lg:w-[350px] flex-shrink-0">
-          <div className="flex flex-col items-center justify-center space-y-4">
+        <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:w-[350px] flex-shrink-0">
+          <div className="flex flex-col items-center justify-center space-y-3 md:space-y-4">
             {/* Profile Image */}
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-200 flex items-center justify-center bg-blue-50">
+            <div className="w-24 h-24 md:w-28 lg:w-32 h-24 md:h-28 lg:h-32 rounded-full overflow-hidden border-4 border-blue-200 flex items-center justify-center bg-blue-50">
               {currentPlayer.profileImage ? (
                 <img
                   src={currentPlayer.profileImage}
@@ -55,39 +55,43 @@ const NumberGrid: FC<NumberGridProps> = ({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User className="w-20 h-20 text-blue-400" />
+                <User className="w-12 h-12 md:w-14 lg:w-16 h-12 md:h-14 lg:h-16 text-blue-400" />
               )}
             </div>
 
             {/* Player Details */}
             <div className="flex flex-col items-center text-center w-full">
-              <h2 className="text-3xl font-bold text-blue-900 mb-3">
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-900 mb-2 md:mb-3">
                 {currentPlayer.name}
               </h2>
-              <div className="flex flex-col w-full gap-3">
+              <div className="flex flex-col w-full gap-2 md:gap-3">
                 {currentPlayer.woreda && (
-                  <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-xl font-bold">
+                  <div className="bg-blue-100 text-blue-800 px-3 py-1 md:px-4 md:py-2 rounded-full text-lg md:text-xl font-bold">
                     የህብረት ስም፡ {currentPlayer.woreda}
                   </div>
                 )}
-                <div className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-xl font-bold">
+                <div className="bg-green-100 text-green-800 px-3 py-1 md:px-4 md:py-2 rounded-full text-lg md:text-xl font-bold">
                   {currentPlayer.score} ነጥቦች
                 </div>
               </div>
             </div>
 
             {/* Progress Stats */}
-            <div className="grid grid-cols-2 gap-4 w-full mt-4">
-              <div className="bg-blue-50 p-4 rounded-xl text-center">
-                <p className="text-blue-500 text-lg font-medium">ጥያቄዎች</p>
-                <p className="text-2xl font-bold text-blue-800">
+            <div className="grid grid-cols-2 gap-3 md:gap-4 w-full mt-3 md:mt-4">
+              <div className="bg-blue-50 p-3 md:p-4 rounded-xl text-center">
+                <p className="text-blue-500 text-sm md:text-base lg:text-lg font-medium">
+                  ጥያቄዎች
+                </p>
+                <p className="text-lg md:text-xl lg:text-2xl font-bold text-blue-800">
                   {currentPlayer.questionsAnswered.length}/{playerQuestionLimit}
                   {isPlayerInTieBreaker && " + ታይ"}
                 </p>
               </div>
-              <div className="bg-green-50 p-4 rounded-xl text-center">
-                <p className="text-green-500 text-lg font-medium">ትክክል</p>
-                <p className="text-2xl font-bold text-green-800">
+              <div className="bg-green-50 p-3 md:p-4 rounded-xl text-center">
+                <p className="text-green-500 text-sm md:text-base lg:text-lg font-medium">
+                  ትክክል
+                </p>
+                <p className="text-lg md:text-xl lg:text-2xl font-bold text-green-800">
                   {currentPlayer.correctAnswers}
                 </p>
               </div>
@@ -98,7 +102,9 @@ const NumberGrid: FC<NumberGridProps> = ({
 
       {/* Number Grid */}
       <div className="flex-grow">
-        <div className={`grid ${getGridCols()} gap-6 md:gap-8 w-full mx-auto`}>
+        <div
+          className={`grid ${getGridCols()} gap-4 md:gap-6 lg:gap-8 w-full mx-auto`}
+        >
           {numbers.map((number, index) => {
             const isCompleted = completedNumbers.includes(number);
             const isHighlighted = highlightedNumbers.includes(number);
@@ -112,7 +118,7 @@ const NumberGrid: FC<NumberGridProps> = ({
                 disabled={isCompleted}
                 style={{ animationDelay }}
                 className={`
-                  aspect-square flex items-center justify-center text-4xl md:text-5xl font-bold rounded-xl md:rounded-xl 
+                  aspect-square flex items-center justify-center text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold rounded-xl md:rounded-xl
                   shadow-md transition-all duration-300
                   ${
                     isCompleted

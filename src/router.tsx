@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import Layout from "./pages/Layout";
 import GamePage from "./pages/GamePage";
 import QuestionPage from "./pages/QuestionPage";
+import QuestionReaderPage from "./pages/QuestionReaderPage";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: "/question/:questionId",
         element: <QuestionPage />,
+      },
+      {
+        path: "/question-reader",
+        element: <QuestionReaderPage />,
       },
     ],
   },

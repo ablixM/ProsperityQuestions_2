@@ -68,28 +68,29 @@ const PlayerStatusModal = ({
   const sortedPlayers = [...allPlayers].sort((a, b) => b.score - a.score);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-2xl shadow-2xl w-[90vw] h-[90vh] max-w-7xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full h-full max-w-7xl max-h-[95vh] md:w-[90vw] md:h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-blue-600 p-6 flex justify-between items-center">
+        <div className="bg-blue-600 p-3 md:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div className="flex items-center">
-            <h2 className="text-4xl font-bold text-white flex items-center">
-              <Users className="w-10 h-10 mr-4" />
-              የተወዳዳሪ ደረጃ
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white flex items-center">
+              <Users className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 mr-2 md:mr-3 lg:mr-4" />
+              <span className="hidden sm:inline">የተወዳዳሪ ደረጃ</span>
+              <span className="sm:hidden">ደረጃ</span>
             </h2>
-            <div className="ml-4 bg-white/20 px-3 py-1 rounded-full">
-              <span className="text-white font-medium">
+            <div className="ml-2 md:ml-4 bg-white/20 px-2 py-1 md:px-3 rounded-full">
+              <span className="text-white font-medium text-sm md:text-base">
                 Round {currentRound}
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 md:gap-2 w-full sm:w-auto justify-between sm:justify-end">
             {roundOneState && (
-              <div className="flex gap-2">
+              <div className="flex gap-1 md:gap-2">
                 <Button
                   onClick={() => switchToRound(1)}
                   variant={currentRound === 1 ? "secondary" : "outline"}
-                  className={`text-sm ${
+                  className={`text-xs md:text-sm px-2 py-1 md:px-3 ${
                     currentRound === 1
                       ? "bg-white text-blue-600"
                       : "text-white border-white hover:bg-white hover:text-blue-600"
@@ -100,7 +101,7 @@ const PlayerStatusModal = ({
                 <Button
                   onClick={() => switchToRound(2)}
                   variant={currentRound === 2 ? "secondary" : "outline"}
-                  className={`text-sm ${
+                  className={`text-xs md:text-sm px-2 py-1 md:px-3 ${
                     currentRound === 2
                       ? "bg-white text-blue-600"
                       : "text-white border-white hover:bg-white hover:text-blue-600"
@@ -113,9 +114,9 @@ const PlayerStatusModal = ({
             <Button
               variant="ghost"
               onClick={onClose}
-              className="text-white hover:bg-blue-700 hover:text-white p-3 h-auto"
+              className="text-white hover:bg-blue-700 hover:text-white p-2 md:p-3 h-auto"
             >
-              <X className="w-8 h-8" />
+              <X className="w-6 h-6 md:w-8 md:h-8" />
             </Button>
           </div>
         </div>
@@ -135,17 +136,19 @@ const PlayerStatusModal = ({
         />
 
         {/* Content */}
-        <div className="flex-1 overflow-auto p-8">
+        <div className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
           {sortedPlayers.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full">
-              <Users className="w-20 h-20 text-gray-400 mb-4" />
-              <p className="text-3xl text-gray-500">ተወዳዳሪዎች አልገቡም</p>
+              <Users className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 text-gray-400 mb-3 md:mb-4" />
+              <p className="text-xl md:text-2xl lg:text-3xl text-gray-500 text-center">
+                ተወዳዳሪዎች አልገቡም
+              </p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Round Two Setup Section - Only show in Round 1 */}
               {currentRound === 1 && (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-6">
                   {!showRoundTwoSetup ? (
                     <div className="text-center">
                       <h3 className="text-2xl font-bold text-blue-900 mb-4">

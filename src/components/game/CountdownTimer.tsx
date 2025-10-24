@@ -208,49 +208,49 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-4 flex flex-col items-center">
-      <div className="text-center mb-4">
+    <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 flex flex-col items-center">
+      <div className="text-center mb-3 md:mb-4">
         <div
-          className={`text-5xl font-bold mb-2 ${getColorClasses()} transition-colors duration-300`}
+          className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-2 ${getColorClasses()} transition-colors duration-300`}
         >
           {formatTime(timeLeft)}
         </div>
         <div className="flex items-center justify-center text-gray-600">
-          <Clock className="w-4 h-4 mr-1" />
-          <span className="text-sm">Time Remaining</span>
+          <Clock className="w-3 h-3 md:w-4 md:h-4 mr-1" />
+          <span className="text-xs md:text-sm">Time Remaining</span>
         </div>
       </div>
 
-      <div className="flex justify-center space-x-2">
+      <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-2">
         {isPaused ? (
           <Button
             onClick={startTimer}
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-green-600 hover:bg-green-700 text-white text-sm md:text-base"
             size="sm"
             disabled={forceStop}
           >
-            <Play className="w-4 h-4 mr-1" /> ጀምርር
+            <Play className="w-3 h-3 md:w-4 md:h-4 mr-1" /> ጀምርር
           </Button>
         ) : (
           <Button
             onClick={pauseTimer}
-            className="bg-amber-600 hover:bg-amber-700 text-white"
+            className="bg-amber-600 hover:bg-amber-700 text-white text-sm md:text-base"
             size="sm"
           >
-            <Pause className="w-4 h-4 mr-1" /> አቁም
+            <Pause className="w-3 h-3 md:w-4 md:h-4 mr-1" /> አቁም
           </Button>
         )}
         <Button
           onClick={resetTimer}
           variant="outline"
           size="sm"
-          className="text-gray-600"
+          className="text-gray-600 text-sm md:text-base"
         >
-          <RotateCcw className="w-4 h-4 mr-1" /> ወደመጀመሪያ መልስ
+          <RotateCcw className="w-3 h-3 md:w-4 md:h-4 mr-1" /> ወደመጀመሪያ መልስ
         </Button>
       </div>
 
-      <div className="relative w-56 h-56 mt-4">
+      <div className="relative w-40 h-40 md:w-48 lg:w-56 h-40 md:h-48 lg:h-56 mt-3 md:mt-4">
         {/* Background circle */}
         <svg className="w-full h-full" viewBox="0 0 170 170">
           <circle
@@ -280,7 +280,7 @@ const CountdownTimer: FC<CountdownTimerProps> = ({
 
         {/* Timer text in center */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-5xl font-bold text-blue-900 font-mono">
+          <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-blue-900 font-mono">
             {formatTime(timeLeft)}
           </span>
         </div>
