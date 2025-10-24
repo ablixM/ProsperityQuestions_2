@@ -132,8 +132,7 @@ function HomePage() {
                   {roundOneState && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                       <p className="text-blue-800 font-medium">
-                        እዚህ ሩንድ {currentRound} ነው። ተወዳዳሪዎች እና ውጤቶች ለዚህ ሩንድ ብቻ
-                        ናቸው።
+                        እዚህ ዙር {currentRound} ነው። ተወዳዳሪዎች እና ውጤቶች ለዚህ ዙር ብቻ ናቸው።
                       </p>
                     </div>
                   )}
@@ -145,7 +144,7 @@ function HomePage() {
                   onClick={() => setIsResetRoundTwoDialogOpen(true)}
                   className="mt-4 mr-4 text-orange-600 hover:text-orange-800 transition-colors text-lg underline underline-offset-4"
                 >
-                  ሩንድ ሁለትን ያጥፉ እና እንደገና ጀምሩ
+                  ዙር ሁለትን ያጥፉ እና እንደገና ጀምሩ
                 </button>
               )}
               <button

@@ -121,6 +121,10 @@ function GamePage() {
   const handleNumberSelect = (number: number) => {
     // Navigate to the question page for the selected number
     navigate(`/question/${number}`);
+    // Scroll to bottom when going to question page
+    setTimeout(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }, 100);
   };
 
   const handleBackToHome = () => {

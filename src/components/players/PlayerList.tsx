@@ -10,6 +10,10 @@ const PlayerList = () => {
   const handlePlayerSelect = (playerId: string) => {
     setCurrentPlayer(playerId);
     navigate("/game");
+    // Scroll to top when going to game page
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
   };
 
   const handleRemovePlayer = (e: React.MouseEvent, playerId: string) => {

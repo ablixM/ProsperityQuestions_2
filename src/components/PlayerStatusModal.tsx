@@ -149,23 +149,23 @@ const PlayerStatusModal = ({
                   {!showRoundTwoSetup ? (
                     <div className="text-center">
                       <h3 className="text-2xl font-bold text-blue-900 mb-4">
-                        ሩንድ ሁለት ፍጠር
+                        ዙር ሁለት ፍጠር
                       </h3>
                       <p className="text-gray-600 mb-6">
-                        ለሩንድ ሁለት አዲስ ጨዋታ ከተወዳዳሪዎች አንዳንድ ተወዳዳሪዎች ጋር መጀመር ይችላሉ።
+                        ለዙር ሁለት አዲስ ጨዋታ ከተወዳዳሪዎች አንዳንድ ተወዳዳሪዎች ጋር መጀመር ይችላሉ።
                       </p>
                       <Button
                         onClick={() => setShowRoundTwoSetup(true)}
                         className="bg-blue-600 hover:bg-blue-700 text-white"
                       >
-                        ሩንድ ሁለት ፍጠር
+                        ዙር ሁለት ፍጠር
                       </Button>
                     </div>
                   ) : (
                     <>
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-2xl font-bold text-blue-900">
-                          ለሩንድ ሁለት ተወዳዳሪዎችን ይምረጡ
+                          ለዙር ሁለት ተወዳዳሪዎችን ይምረጡ
                         </h3>
                         <Button
                           onClick={() => setShowRoundTwoSetup(false)}
@@ -176,8 +176,8 @@ const PlayerStatusModal = ({
                         </Button>
                       </div>
                       <p className="text-gray-600 mb-4">
-                        ለሩንድ ሁለት የሚሳተፉ ተወዳዳሪዎችን ይምረጡ። ይህ ሩንድ ለሩንድ ሁለት የሚሆኑ
-                        ተወዳዳሪዎች ብቻ ናቸው።
+                        ለዙር ሁለት የሚሳተፉ ተወዳዳሪዎችን ይምረጡ። ይህ ዙር ለዙር ሁለት የሚሆኑ ተወዳዳሪዎች
+                        ብቻ ናቸው።
                       </p>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                         {sortedPlayers.map((player) => {
@@ -238,7 +238,7 @@ const PlayerStatusModal = ({
                             onClick={() => startRoundTwo(roundTwoPlayers)}
                             className="bg-green-600 hover:bg-green-700 text-white"
                           >
-                            ሩንድ ሁለት ጀምር ({roundTwoPlayers.length} ተወዳሪዎች)
+                            ዙር ሁለት ጀምር ({roundTwoPlayers.length} ተወዳሪዎች)
                           </Button>
                         </div>
                       )}
@@ -252,7 +252,7 @@ const PlayerStatusModal = ({
                 <div className="bg-green-50 border border-green-200 rounded-xl p-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-2xl font-bold text-green-900">
-                      ሩንድ ሁለት ተወዳዳሪዎችን አስተካክል
+                      ዙር ሁለት ተወዳዳሪዎችን አስተካክል
                     </h3>
                     <Button
                       onClick={() => setShowRoundTwoSetup(!showRoundTwoSetup)}
@@ -267,8 +267,8 @@ const PlayerStatusModal = ({
                   {showRoundTwoSetup && (
                     <>
                       <p className="text-gray-600 mb-4">
-                        ለሩንድ ሁለት ተወዳዳሪዎችን ያክሉ ወይም ያስወግዱ። ለውጦች በተግባር ላይ የሚሆኑበት ጊዜ
-                        ሩንድ ሁለትን እንደገና ስብሰብ ነው።
+                        ለዙር ሁለት ተወዳዳሪዎችን ያክሉ ወይም ያስወግዱ። ለውጦች በተግባር ላይ የሚሆኑበት ጊዜ
+                        ዙር ሁለትን እንደገና ስብሰብ ነው።
                       </p>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                         {getRoundOnePlayers().map((player) => {
@@ -333,7 +333,7 @@ const PlayerStatusModal = ({
                             variant="outline"
                             className="border-red-300 text-red-700 hover:bg-red-100"
                           >
-                            ሩንድ ሁለትን ያጥፉ
+                            ዙር ሁለትን ያጥፉ
                           </Button>
                           <p className="text-sm text-gray-600 self-center">
                             ተወዳዳሪዎች ተመርጠዋል፡ {roundTwoPlayers.length}
@@ -348,7 +348,7 @@ const PlayerStatusModal = ({
                           className="bg-green-600 hover:bg-green-700 text-white"
                           disabled={roundTwoPlayers.length === 0}
                         >
-                          ሩንድ ሁለትን እንደገና ጀምር
+                          ዙር ሁለትን እንደገና ጀምር
                         </Button>
                       </div>
                     </>
@@ -357,7 +357,7 @@ const PlayerStatusModal = ({
                   {!showRoundTwoSetup && (
                     <div className="text-center">
                       <p className="text-gray-600 mb-4">
-                        ሩንድ ሁለት ተወዳዳሪዎች፡ {roundTwoPlayers.length} ተወዳዳሪዎች
+                        ዙር ሁለት ተወዳዳሪዎች፡ {roundTwoPlayers.length} ተወዳዳሪዎች
                       </p>
                       <div className="flex flex-wrap gap-2 justify-center">
                         {roundOneState.players
