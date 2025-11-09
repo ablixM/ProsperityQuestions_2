@@ -120,8 +120,8 @@ function HomePage() {
               የአስተሳሰብና የተግባር አንድነት ለጠንካራ ፓርቲ
             </p>
             <h1 className="text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-blue-900 mb-6 md:mb-12 z-50 leading-tight px-2">
-              በበልፅግና ፓርቲ የአዲስ አበባ ቅርንጫፍ ፅ/ቤት የፖለቲካ አቅምና ግንባታ ዘርፍ የተዘጋጀ የአሸናፊዎች
-              አሸናፊ የጥያቄና መልስ ውድድር መድረክ
+              በብልፅግና ፓርቲ የየካ ክፍለ ከተማ ቅርንጫፍ ፅ/ቤት የፖለቲካና አቅም ግንባታ ዘርፍ የተዘጋጀ
+              የአሸናፊዎች አሸናፊ የጥያቄና መልስ የማጠቃለያ ውድድር
             </h1>
 
             {/* Player Management Section */}

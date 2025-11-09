@@ -62,7 +62,7 @@ const QuestionPage = () => {
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
   const [playError] = useSound("/sounds/error.mp3", { volume: 0.4 });
-  const [playCorrect] = useSound("/sounds/correct.mp3", { volume: 0.4 });
+  const [playSuccess] = useSound("/sounds/success.mp3", { volume: 0.4 });
 
   // Reset question-specific state when navigating between questions
   useEffect(() => {
@@ -175,7 +175,7 @@ const QuestionPage = () => {
 
     if (answerIndex === question?.correctAnswer) {
       // Correct answer handling
-      playCorrect();
+      playSuccess();
       setIsAnswered(true);
       setIsCorrect(true);
       setShowCorrectAnswer(true);
