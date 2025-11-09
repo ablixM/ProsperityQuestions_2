@@ -66,6 +66,7 @@ const PlayerStatusModal = ({
 
   // Sort players by score (highest to lowest)
   const sortedPlayers = [...allPlayers].sort((a, b) => b.score - a.score);
+  const maxQuestionsPerPlayer = getMaxQuestionsPerPlayer();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -380,155 +381,149 @@ const PlayerStatusModal = ({
                   )}
                 </div>
               )}
-              {sortedPlayers.map((player) => {
-                const playerQuestionLimit = getMaxQuestionsPerPlayer();
-                const isPlayerInTieBreaker = hasPlayerReachedMaxQuestions(
-                  player.id
-                );
+              <div className="grid gap-4 md:gap-6 lg:gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                {sortedPlayers.map((player) => {
+                  const playerQuestionLimit = maxQuestionsPerPlayer;
+                  const isPlayerInTieBreaker = hasPlayerReachedMaxQuestions(
+                    player.id
+                  );
+                  const answeredPercentage =
+                    playerQuestionLimit > 0
+                      ? Math.round(
+                          (player.questionsAnswered.length /
+                            playerQuestionLimit) *
+                            100
+                        )
+                      : 0;
+                  const incorrectCount =
+                    player.incorrectAnswers !== undefined
+                      ? player.incorrectAnswers
+                      : Math.max(
+                          player.questionsAnswered.length -
+                            player.correctAnswers,
+                          0
+                        );
 
-                // Calculate percentage of answered questions based on player's limit
-                const answeredPercentage = Math.round(
-                  (player.questionsAnswered.length / playerQuestionLimit) * 100
-                );
-
-                return (
-                  <div
-                    key={player.id}
-                    className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-6 p-6">
-                      {/* Profile Image - Column 1 */}
-                      <div className="md:col-span-1 flex flex-col items-center justify-center">
-                        {/* Profile Image */}
-                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-200 flex items-center justify-center bg-blue-50">
-                          {player.profileImage ? (
-                            <img
-                              src={player.profileImage}
-                              alt={`${player.name}'s profile`}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <User className="w-16 h-16 text-blue-400" />
-                          )}
-                        </div>
-
-                        {/* Woreda Badge */}
-                        {player.woreda && (
-                          <div className="mt-3 bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-bold text-lg">
-                            የህብረት ስም {player.woreda}
+                  return (
+                    <div
+                      key={player.id}
+                      className="bg-white rounded-2xl shadow-md border border-gray-200 p-4 md:p-5 flex flex-col gap-4"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-4 border-blue-200 flex items-center justify-center bg-blue-50">
+                            {player.profileImage ? (
+                              <img
+                                src={player.profileImage}
+                                alt={`${player.name}'s profile`}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <User className="w-8 h-8 md:w-10 md:h-10 text-blue-400" />
+                            )}
                           </div>
-                        )}
+                          <div>
+                            <h3 className="text-lg md:text-xl font-bold text-blue-900">
+                              {player.name}
+                            </h3>
+                            {player.woreda && (
+                              <span className="mt-1 inline-block bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs md:text-sm font-semibold">
+                                የህብረት ስም {player.woreda}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-xs uppercase tracking-wide text-gray-500">
+                            ነጥብ
+                          </span>
+                          <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            {player.score}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* Player info and stats - Column 2-5 */}
-                      <div className="md:col-span-4 flex flex-col justify-center">
-                        <h3 className="text-3xl font-bold text-blue-900 mb-4">
-                          {player.name}
-                        </h3>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                          <div className="bg-blue-50 p-4 rounded-xl text-center">
-                            <p className="text-blue-500 text-lg font-medium">
-                              ጥያቄዎች
-                            </p>
-                            <p className="text-3xl font-bold text-blue-800">
-                              {player.questionsAnswered.length}/
-                              {playerQuestionLimit}
-                              {isPlayerInTieBreaker}
-                            </p>
-                          </div>
-
-                          <div className="bg-green-50 p-4 rounded-xl text-center">
-                            <p className="text-green-500 text-lg font-medium">
-                              በትክክል የተመለሱ
-                            </p>
-                            <p className="text-3xl font-bold text-green-800">
-                              {player.correctAnswers}
-                            </p>
-                          </div>
-
-                          <div className="bg-red-50 p-4 rounded-xl text-center">
-                            <p className="text-red-500 text-lg font-medium">
-                              በትክክል ያልተመለሱ
-                            </p>
-                            <p className="text-3xl font-bold text-red-800">
-                              {player.questionsAnswered.length -
-                                player.correctAnswers}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Progress bar */}
-                        <div className="mt-2">
-                          <div className="flex justify-between mb-2">
-                            <span className="text-lg text-gray-600">
-                              Progress
-                            </span>
-                            <span className="text-lg font-medium text-blue-700">
-                              {answeredPercentage}%
-                            </span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-4">
-                            <div
-                              className="bg-blue-600 h-4 rounded-full"
-                              style={{ width: `${answeredPercentage}%` }}
-                            ></div>
-                          </div>
-                        </div>
-
-                        {/* Question Numbers */}
-                        <div className="mt-4">
-                          <p className="text-lg text-gray-600 mb-2">
-                            የተጠየቁ ጥያቂዎች
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="bg-blue-50 rounded-xl p-3 text-center">
+                          <p className="text-xs md:text-sm text-blue-500 font-medium">
+                            ጥያቄዎች
                           </p>
-                          <div className="flex flex-row justify-between items-center gap-2">
-                            {player.questionsAnswered.map(
-                              (questionId, index) => {
-                                const isCorrect = player.correctAnswers > index;
-                                return (
-                                  <div
-                                    key={questionId}
-                                    className="relative group"
-                                  >
-                                    <div
-                                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                        isCorrect
-                                          ? "bg-green-100 text-green-800"
-                                          : "bg-red-100 text-red-800"
-                                      }`}
-                                    >
-                                      Q{questionId}
-                                    </div>
-                                    {/* Revert button - appears on hover */}
-                                    <button
-                                      onClick={() =>
-                                        handleRevertClick(player.id, questionId)
-                                      }
-                                      className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 hover:bg-red-600 text-white rounded-full p-1 w-5 h-5 flex items-center justify-center text-xs"
-                                      title={`Revert answer for question ${questionId}`}
-                                    >
-                                      <RotateCcw className="w-3 h-3" />
-                                    </button>
-                                  </div>
-                                );
-                              }
-                            )}
-                            <div className="md:col-span-1 flex items-center justify-center">
-                              {/* Score - Column 6 */}
-                              <div className="bg-blue-600 text-whiterounded-xl text-center flex flex-row items-center justify-center  p-2 rounded-2xl">
-                                <p className="text-xl font-bold mr-2">
-                                  {player.score}
-                                </p>
-                                <p className="text-xl text-blue-100 ">ነጥብ</p>
+                          <p className="text-lg md:text-xl font-bold text-blue-800">
+                            {player.questionsAnswered.length}/
+                            {playerQuestionLimit || 0}
+                            {isPlayerInTieBreaker ? " + ታይ" : ""}
+                          </p>
+                        </div>
+                        <div className="bg-green-50 rounded-xl p-3 text-center">
+                          <p className="text-xs md:text-sm text-green-500 font-medium">
+                            ትክክል
+                          </p>
+                          <p className="text-lg md:text-xl font-bold text-green-800">
+                            {player.correctAnswers}
+                          </p>
+                        </div>
+                        <div className="bg-red-50 rounded-xl p-3 text-center">
+                          <p className="text-xs md:text-sm text-red-500 font-medium">
+                            ስህተት
+                          </p>
+                          <p className="text-lg md:text-xl font-bold text-red-800">
+                            {incorrectCount}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs md:text-sm text-gray-500">
+                            እድገት
+                          </span>
+                          <span className="text-xs md:text-sm font-medium text-blue-700">
+                            {answeredPercentage}%
+                          </span>
+                        </div>
+                        <progress
+                          className="w-full h-2 rounded-full overflow-hidden bg-gray-200 [accent-color:#2563EB]"
+                          value={player.questionsAnswered.length}
+                          max={Math.max(playerQuestionLimit, 1)}
+                        />
+                      </div>
+
+                      <div>
+                        <p className="text-xs md:text-sm text-gray-500 mb-2">
+                          የተጠየቁ ጥያቄዎች
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {player.questionsAnswered.map((questionId, index) => {
+                            const isCorrect = index < player.correctAnswers;
+                            return (
+                              <div key={questionId} className="relative group">
+                                <div
+                                  className={`px-2 py-1 rounded-full text-xs md:text-sm font-medium ${
+                                    isCorrect
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-red-100 text-red-800"
+                                  }`}
+                                >
+                                  Q{questionId}
+                                </div>
+                                <button
+                                  onClick={() =>
+                                    handleRevertClick(player.id, questionId)
+                                  }
+                                  className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 hover:bg-red-600 text-white rounded-full p-1 w-5 h-5 flex items-center justify-center text-[10px]"
+                                  title={`Revert answer for question ${questionId}`}
+                                >
+                                  <RotateCcw className="w-3 h-3" />
+                                </button>
                               </div>
-                            </div>
-                          </div>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

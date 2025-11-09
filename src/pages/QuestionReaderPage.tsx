@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "../components/ui/button";
-import { questionsData } from "../data/questions";
+import { additionalQuestions } from "../data/additionalQuestions";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +32,7 @@ function QuestionReaderPage() {
   };
 
   const question = selectedQuestion
-    ? questionsData[selectedQuestion - 1]
+    ? additionalQuestions[selectedQuestion - 1]
     : null;
 
   return (
@@ -62,7 +62,7 @@ function QuestionReaderPage() {
             <div
               className={`grid grid-cols-3 md:grid-cols-6 lg:grid-cols-10 gap-3 md:gap-4 lg:gap-6 w-full mx-auto`}
             >
-              {questionsData.map((_, index) => {
+              {additionalQuestions.map((_, index) => {
                 const number = index + 1;
                 const isSelected = selectedQuestion === number;
 

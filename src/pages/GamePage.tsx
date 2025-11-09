@@ -3,7 +3,7 @@ import NumberGrid from "../components/game/NumberGrid";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useGameStore } from "../store/gameStore";
-import { questionsData } from "../data/questions";
+import { additionalQuestions } from "../data/additionalQuestions";
 import { ChevronLeft, Users } from "lucide-react";
 
 function GamePage() {
@@ -208,7 +208,7 @@ function GamePage() {
             )}
 
             <NumberGrid
-              totalNumbers={questionsData.length}
+              totalNumbers={additionalQuestions.length}
               onSelectNumber={handleNumberSelect}
               completedNumbers={completedNumbers}
               highlightedNumbers={availableQuestions}

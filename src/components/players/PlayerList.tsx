@@ -32,65 +32,57 @@ const PlayerList = () => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-      <div className="divide-y divide-gray-100">
-        {players.map((player) => (
-          <div
-            key={player.id}
-            onClick={() => handlePlayerSelect(player.id)}
-            className="flex flex-col sm:flex-row items-center p-3 md:p-4 hover:bg-blue-50 cursor-pointer transition-colors"
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+      {players.map((player) => (
+        <div
+          key={player.id}
+          onClick={() => handlePlayerSelect(player.id)}
+          className="relative bg-white rounded-2xl shadow-lg border border-gray-100 p-4 md:p-5 flex flex-col items-center text-center hover:shadow-xl hover:border-blue-200 transition-all duration-200 cursor-pointer"
+        >
+          {/* Remove Button */}
+          <Button
+            variant="ghost"
+            onClick={(e) => handleRemovePlayer(e, player.id)}
+            className="absolute top-2 right-2 text-red-600 hover:text-red-800 hover:bg-red-50 p-2 h-auto"
+            aria-label="Remove Player"
           >
-            {/* Player profile image */}
-            <div className="flex-shrink-0 mb-3 sm:mb-0 sm:mr-4">
-              <div className="w-24 h-24 md:w-32 lg:w-36 h-24 md:h-32 lg:h-36 rounded-full overflow-hidden border-2 border-blue-200 flex items-center justify-center bg-blue-50">
-                {player.profileImage ? (
-                  <img
-                    src={player.profileImage}
-                    alt={`${player.name}'s profile`}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User className="w-12 h-12 md:w-16 lg:w-20 h-12 md:h-16 lg:h-20 text-blue-400" />
-                )}
+            <X className="h-5 w-5 md:h-6 md:w-6" />
+          </Button>
+
+          {/* Player profile image */}
+          <div className="w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full overflow-hidden border-4 border-blue-200 flex items-center justify-center bg-blue-50 mb-3 md:mb-4">
+            {player.profileImage ? (
+              <img
+                src={player.profileImage}
+                alt={`${player.name}'s profile`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-10 h-10 md:w-12 md:h-12 text-blue-400" />
+            )}
+          </div>
+
+          {/* Player info */}
+          <h3 className="text-xl md:text-2xl font-bold text-blue-900 mb-1">
+            {player.name}
+          </h3>
+          <p className="text-base md:text-lg text-gray-600">
+            <span className="font-semibold">
+              {player.questionsAnswered.length}
+            </span>{" "}
+            ጥያቄዎች ተጠይቀዋል
+          </p>
+
+          {/* Woreda badge */}
+          {player.woreda && (
+            <div className="mt-3">
+              <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-base md:text-lg font-semibold">
+                {player.woreda}
               </div>
             </div>
-
-            {/* Player info */}
-            <div className="flex-grow text-center sm:text-left mb-3 sm:mb-0">
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-900">
-                {player.name}
-              </h3>
-              <p className="text-lg md:text-xl text-gray-600">
-                <span className="font-semibold">
-                  {player.questionsAnswered.length}
-                </span>{" "}
-                ጥያቄዎች ተጠይቀዋል
-              </p>
-            </div>
-
-            {/* Woreda badge and Remove Button */}
-            <div className="flex items-center justify-between w-full sm:w-auto sm:flex-col sm:items-end gap-2">
-              {player.woreda && (
-                <div className="sm:mr-4">
-                  <div className="bg-blue-100 text-blue-800 px-2 py-1 md:px-3 rounded-full text-lg md:text-xl lg:text-2xl font-bold">
-                    {player.woreda}
-                  </div>
-                </div>
-              )}
-
-              {/* Remove Button */}
-              <Button
-                variant="ghost"
-                onClick={(e) => handleRemovePlayer(e, player.id)}
-                className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 h-auto"
-                aria-label="Remove Player"
-              >
-                <X className="h-5 w-5 md:h-6 md:w-6" />
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

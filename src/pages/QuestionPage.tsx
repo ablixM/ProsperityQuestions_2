@@ -10,7 +10,7 @@ import {
   X,
   User,
 } from "lucide-react";
-import { questionsData } from "../data/questions";
+import { additionalQuestions } from "../data/additionalQuestions";
 import { useGameStore } from "../store/gameStore";
 import { ResultDialog } from "../components/ui/dialog";
 import useSound from "use-sound";
@@ -40,7 +40,7 @@ const QuestionPage = () => {
     : false;
 
   // Get the question data
-  const question = questionsData[questionNumber - 1] || null;
+  const question = additionalQuestions[questionNumber - 1] || null;
 
   // UI state
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(
