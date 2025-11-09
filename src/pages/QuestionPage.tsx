@@ -64,6 +64,22 @@ const QuestionPage = () => {
   const [playError] = useSound("/sounds/error.mp3", { volume: 0.4 });
   const [playCorrect] = useSound("/sounds/correct.mp3", { volume: 0.4 });
 
+  // Reset question-specific state when navigating between questions
+  useEffect(() => {
+    setSelectedAnswerIndex(null);
+    setIsAnswered(false);
+    setIsCorrect(null);
+    setTimerRunning(false);
+    setForceStopTimer(false);
+    setShowResultDialog(false);
+    setIsPreviouslyAnswered(false);
+    setShowCorrectAnswer(false);
+    setIncorrectAttempts(0);
+    setIncorrectAnswers([]);
+    setFeedbackMessage("");
+    setTimeIsUp(false);
+  }, [questionNumber]);
+
   // Check if this question was previously answered
   useEffect(() => {
     if (questionNumber && isQuestionCompleted(questionNumber)) {
@@ -110,6 +126,19 @@ const QuestionPage = () => {
       }
     };
   }, [showIncorrectFeedback]);
+
+  // Auto-start or stop timer based on question state
+  useEffect(() => {
+    if (!question || !currentPlayer) return;
+
+    if (!isPreviouslyAnswered) {
+      setForceStopTimer(false);
+      setTimerRunning(true);
+    } else {
+      setTimerRunning(false);
+      setForceStopTimer(true);
+    }
+  }, [questionNumber, question, currentPlayer, isPreviouslyAnswered]);
 
   const handleTimeUp = () => {
     setTimeIsUp(true);
@@ -511,6 +540,7 @@ const QuestionPage = () => {
               <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:p-8 h-full flex flex-col">
                 {/* Timer Component */}
                 <CountdownTimer
+                  key={questionNumber}
                   duration={60}
                   isRunning={timerRunning}
                   forceStop={forceStopTimer}
@@ -573,7 +603,7 @@ const QuestionPage = () => {
 
             {isPreviouslyAnswered && (
               <div className="bg-green-50 border-2 border-green-200 rounded-2xl shadow-lg p-4 md:p-6 lg:p-8 h-full flex flex-col items-center justify-center">
-                <CheckCircle2 className="w-12 h-12 md:w-16 md:w-20 text-green-500 mb-3 md:mb-4" />
+                <CheckCircle2 className="w-12 h-12 md:w-16 lg:w-20 text-green-500 mb-3 md:mb-4" />
                 <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-center text-green-700 mb-2">
                   ጥያቄው ተመልሷል
                 </h3>
