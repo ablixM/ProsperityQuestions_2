@@ -81,7 +81,7 @@ const PlayerStatusModal = ({
             </h2>
             <div className="ml-2 md:ml-4 bg-white/20 px-2 py-1 md:px-3 rounded-full">
               <span className="text-white font-medium text-sm md:text-base">
-                Round {currentRound}
+                ዙር {currentRound}
               </span>
             </div>
           </div>
@@ -97,7 +97,7 @@ const PlayerStatusModal = ({
                       : "text-white border-white hover:bg-white hover:text-blue-600"
                   }`}
                 >
-                  Round 1
+                  ዙር 1
                 </Button>
                 <Button
                   onClick={() => switchToRound(2)}
@@ -108,7 +108,7 @@ const PlayerStatusModal = ({
                       : "text-white border-white hover:bg-white hover:text-blue-600"
                   }`}
                 >
-                  Round 2
+                  ዙር 2
                 </Button>
               </div>
             )}
@@ -128,10 +128,10 @@ const PlayerStatusModal = ({
           onClose={() =>
             setRevertDialog({ isOpen: false, playerId: "", questionNumber: 0 })
           }
-          title="Revert Question Answer"
-          message={`Are you sure you want to revert the answer for question ${revertDialog.questionNumber}? This will remove the question from the player's answered questions and adjust their score accordingly.`}
-          confirmLabel="Revert"
-          cancelLabel="Cancel"
+          title="ጥያቄ ውጤት ወደነበረበት መልስ"
+          message={`ለጥያቄ ${revertDialog.questionNumber} የተሰጠውን መልስ ማስወገድ ይፈልጋሉ? ይህ ጥያቄውን ከተጫዋቹ የተመለሱ ጥያቄዎች ውስጥ ያስወግዳል እና ነጥቡን በዚሁ መሰረት ያስተካክላል።`}
+          confirmLabel="አስወግድ"
+          cancelLabel="ይቅር"
           onConfirm={handleRevertConfirm}
           variant="danger"
         />
@@ -428,7 +428,7 @@ const PlayerStatusModal = ({
                             </h3>
                             {player.woreda && (
                               <span className="mt-1 inline-block bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs md:text-sm font-semibold">
-                                የህብረት ስም {player.woreda}
+                                ከፍለ ከተማ፡ {player.woreda}
                               </span>
                             )}
                           </div>
@@ -511,7 +511,7 @@ const PlayerStatusModal = ({
                                     handleRevertClick(player.id, questionId)
                                   }
                                   className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 hover:bg-red-600 text-white rounded-full p-1 w-5 h-5 flex items-center justify-center text-[10px]"
-                                  title={`Revert answer for question ${questionId}`}
+                                  title={`ለጥያቄ ${questionId} መልስን አስወግድ`}
                                 >
                                   <RotateCcw className="w-3 h-3" />
                                 </button>

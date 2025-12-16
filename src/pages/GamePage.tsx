@@ -177,7 +177,7 @@ function GamePage() {
         </Button>
       </div>
 
-      <div className="flex-1 min-h-0 flex flex-col w-full max-w-7xl mx-auto">
+      <div className="flex-1 min-h-0 flex flex-col w-full">
         {/* Header - Compact */}
         <div className="flex-none flex items-center justify-center mb-2 md:mb-4 px-2">
           <Users className="w-5 h-5 md:w-6 md:h-6 text-blue-700 mr-2" />

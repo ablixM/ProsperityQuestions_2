@@ -1,22 +1,29 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { ChevronLeft, CheckCircle2, XCircle, Eye, User } from "lucide-react";
+import {
+  ChevronLeft,
+  CheckCircle2,
+  XCircle,
+  Eye,
+  User,
+  Play,
+  Pause,
+  RotateCcw,
+  Clock,
+} from "lucide-react";
 import { additionalQuestions } from "../data/additionalQuestions";
 import { useGameStore } from "../store/gameStore";
 import { ResultDialog } from "../components/ui/dialog";
 import useSound from "use-sound";
-import CountdownTimer, {
-  CountdownTimerHandle,
-} from "../components/game/CountdownTimer";
 
 const QuestionPage = () => {
   const { questionId } = useParams<{ questionId: string }>();
   const navigate = useNavigate();
   const questionNumber = parseInt(questionId || "0", 10);
 
-  // Ref for the countdown timer
-  const timerRef = useRef<CountdownTimerHandle>(null);
+  // Timer interval ref - directly managed, no child component
+  const intervalRef = useRef<number | null>(null);
 
   // Global state from Zustand
   const {
@@ -45,31 +52,115 @@ const QuestionPage = () => {
   );
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [timerRunning, setTimerRunning] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [isPreviouslyAnswered, setIsPreviouslyAnswered] = useState(false);
   const [timeIsUp, setTimeIsUp] = useState(false);
-  const [forceStopTimer, setForceStopTimer] = useState(false);
 
   // New state for enhanced answer handling - Simplified for Single Attempt
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
-  // Removed multi-attempt states (incorrectAttempts, showIncorrectFeedback, etc.)
+
+  // Inline timer state
+  const TIMER_DURATION = 60;
+  const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
+  const [timerIsPaused, setTimerIsPaused] = useState(true);
+  const [timerStopped, setTimerStopped] = useState(false); // Permanently stopped
 
   const [playError] = useSound("/sounds/error.mp3", { volume: 0.4 });
   const [playSuccess] = useSound("/sounds/success.mp3", { volume: 0.4 });
+
+  // Clear the interval - core function that directly clears
+  const clearTimerInterval = useCallback(() => {
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
+
+  // Stop timer permanently - call this when answer is selected
+  const stopTimerPermanently = useCallback(() => {
+    clearTimerInterval();
+    setTimerIsPaused(true);
+    setTimerStopped(true);
+    console.log("Timer permanently stopped");
+  }, [clearTimerInterval]);
+
+  // Pause timer (can be resumed)
+  const pauseTimer = useCallback(() => {
+    clearTimerInterval();
+    setTimerIsPaused(true);
+  }, [clearTimerInterval]);
+
+  // Start timer
+  const startTimer = useCallback(() => {
+    if (timerStopped) return; // Don't start if permanently stopped
+
+    setTimerIsPaused(false);
+    clearTimerInterval();
+
+    intervalRef.current = window.setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearTimerInterval();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+  }, [timerStopped, clearTimerInterval]);
+
+  // Reset timer
+  const resetTimer = useCallback(() => {
+    clearTimerInterval();
+    setTimeLeft(TIMER_DURATION);
+    setTimerIsPaused(true);
+    setTimerStopped(false);
+  }, [clearTimerInterval]);
+
+  // Handle time up
+  const handleTimeUp = useCallback(() => {
+    setTimeIsUp(true);
+    stopTimerPermanently();
+    setIsAnswered(true);
+    setShowCorrectAnswer(true);
+
+    // Mark the question as incorrect due to timeout
+    if (question) {
+      setSelectedAnswerIndex(question.correctAnswer);
+      setIsCorrect(false);
+      markQuestionAsCompleted(questionNumber, question.correctAnswer, false);
+      playError();
+      setShowResultDialog(true);
+    }
+  }, [
+    question,
+    questionNumber,
+    markQuestionAsCompleted,
+    playError,
+    stopTimerPermanently,
+  ]);
+
+  // Watch for timeLeft reaching 0
+  useEffect(() => {
+    if (timeLeft === 0 && !timerIsPaused && !timerStopped) {
+      handleTimeUp();
+    }
+  }, [timeLeft, timerIsPaused, timerStopped, handleTimeUp]);
 
   // Reset question-specific state when navigating between questions
   useEffect(() => {
     setSelectedAnswerIndex(null);
     setIsAnswered(false);
     setIsCorrect(null);
-    setTimerRunning(false);
-    setForceStopTimer(false);
     setShowResultDialog(false);
     setIsPreviouslyAnswered(false);
     setShowCorrectAnswer(false);
     setTimeIsUp(false);
-  }, [questionNumber]);
+    // Reset timer
+    clearTimerInterval();
+    setTimeLeft(TIMER_DURATION);
+    setTimerIsPaused(true);
+    setTimerStopped(false);
+  }, [questionNumber, clearTimerInterval]);
 
   // Check if this question was previously answered
   useEffect(() => {
@@ -101,47 +192,32 @@ const QuestionPage = () => {
     getCurrentPlayer,
   ]);
 
-  // Auto-start or stop timer based on question state
+  // Auto-start timer when question loads (if not previously answered)
   useEffect(() => {
     if (!question || !currentPlayer) return;
 
-    if (!isPreviouslyAnswered) {
-      setForceStopTimer(false);
-      setTimerRunning(true);
+    if (!isPreviouslyAnswered && !timerStopped) {
+      startTimer();
     } else {
-      setTimerRunning(false);
-      setForceStopTimer(true);
+      stopTimerPermanently();
     }
   }, [questionNumber, question, currentPlayer, isPreviouslyAnswered]);
 
-  const handleTimeUp = () => {
-    setTimeIsUp(true);
-    setTimerRunning(false);
-    setForceStopTimer(true);
-    setIsAnswered(true);
-    setShowCorrectAnswer(true);
-
-    // Mark the question as incorrect due to timeout
-    if (question) {
-      setSelectedAnswerIndex(question.correctAnswer);
-      setIsCorrect(false);
-      markQuestionAsCompleted(questionNumber, question.correctAnswer, false);
-      playError();
-      setShowResultDialog(true);
-    }
-  };
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      clearTimerInterval();
+    };
+  }, [clearTimerInterval]);
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (isAnswered || isPreviouslyAnswered) return;
 
+    // IMMEDIATELY stop the timer - this is the key fix
+    stopTimerPermanently();
+
     // Always save the selected answer for UI display
     setSelectedAnswerIndex(answerIndex);
-
-    // Force stop the timer when an answer is clicked
-    setTimerRunning(false);
-    setForceStopTimer(true);
-    console.log("Timer forced to stop by answer selection");
-
     setIsAnswered(true);
     setShowCorrectAnswer(true);
 
@@ -163,8 +239,8 @@ const QuestionPage = () => {
 
   const handleRevealAnswer = () => {
     setShowCorrectAnswer(true);
-    setForceStopTimer(true);
-    setTimerRunning(false);
+    // IMMEDIATELY stop the timer
+    stopTimerPermanently();
 
     // If not already answered, mark as incorrect and complete
     if (!isAnswered && !isPreviouslyAnswered) {
@@ -192,21 +268,29 @@ const QuestionPage = () => {
     }, 100);
   };
 
-  // Handle timer actions
-  const handleStartTimer = () => {
-    setForceStopTimer(false);
-    setTimerRunning(true);
-    console.log("Starting timer");
+  // Format time as MM:SS
+  const formatTime = (timeInSeconds: number) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
   };
 
-  const handlePauseTimer = () => {
-    setTimerRunning(false);
-    console.log("Pausing timer");
-  };
+  // Calculate progress percentage for the circle
+  const progressPercentage = (timeLeft / TIMER_DURATION) * 100;
 
-  const handleResetTimer = () => {
-    setTimerRunning(false);
-    setForceStopTimer(false);
+  // Calculate the SVG parameters for the circular progress
+  const radius = 70;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset =
+    circumference - (progressPercentage / 100) * circumference;
+
+  // Get the stroke color based on time remaining
+  const getStrokeColor = () => {
+    if (timeLeft < TIMER_DURATION * 0.25) return "#ef4444"; // red-500
+    if (timeLeft < TIMER_DURATION * 0.5) return "#eab308"; // yellow-500
+    return "#3b82f6"; // blue-500
   };
 
   if (!question || !currentPlayer) {
@@ -258,7 +342,7 @@ const QuestionPage = () => {
                   {/* Woreda Badge */}
                   {currentPlayer.woreda && (
                     <div className="bg-blue-100 text-blue-800 px-3 py-1 md:px-4 md:py-2 rounded-full text-sm md:text-lg font-bold mb-3 md:mb-4">
-                      የህብረት ስም፡ {currentPlayer.woreda}
+                      ከፍለ ከተማ፡ {currentPlayer.woreda}
                     </div>
                   )}
 
@@ -406,24 +490,7 @@ const QuestionPage = () => {
               </div>
             )}
 
-            {/* Admin Controls - Show when time is up OR question is not yet answered (and not previously answered) */}
-            {/* But usually we only show reveal if attempts are exhausted... wait user wanted to not hide it when time is out */}
-            {/* If time is up, isAnswered=true, but we still want to show Reveal potentially? No, if timeIsUp, we already showed correct answer in handleTimeUp (setShowCorrectAnswer(true)). */}
-            {/* Wait, the user said: "when time is out doint hide the coreect answer reveal button" */}
-            {/* If time is up, `handleTimeUp` sets `showCorrectAnswer(true)`. Does that mean the answer is already revealed? Yes. */}
-            {/* But maybe they want the BUTTON to trigger it manually? Or maybe `handleTimeUp` shouldn't reveal automatically? */}
-            {/* Assuming handleTimeUp reveals it automatically, the button is moot. */}
-            {/* HOWEVER, if `handleTimeUp` DOES reveal it, why does the user want the button? */}
-            {/* Maybe I should ensure the button is visible so they can click it IF it wasn't autorevealed? */}
-            {/* Or maybe they mean: if time is up, allow me to click reveal. */}
-            {/* I'll let the button be visible if !isCorrect? */}
-
-            {/* Actually, if time is up, `handleTimeUp` sets `setShowCorrectAnswer(true)`, so the answers are highlighted. */}
-            {/* Let's look at the button condition: `!isPreviouslyAnswered && !isAnswered` */}
-            {/* If time is up -> isAnswered=true. So button hides. User wants it NOT to hide. */}
-            {/* So I will change condition to `!isPreviouslyAnswered && (!isAnswered || timeIsUp)` */}
-            {/* But if time is up, isAnswered is true. So `!isAnswered` is false. `timeIsUp` is true. `false || true` is true. So button shows. */}
-
+            {/* Reveal Answer Button */}
             {!isPreviouslyAnswered && (!isAnswered || timeIsUp) && (
               <div className="flex justify-end mt-4">
                 <Button
@@ -442,18 +509,79 @@ const QuestionPage = () => {
           <div className="lg:col-span-3 order-3">
             {!isPreviouslyAnswered && (
               <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:p-8 h-full flex flex-col">
-                {/* Timer Component */}
-                <CountdownTimer
-                  ref={timerRef}
-                  key={questionNumber}
-                  duration={60}
-                  isRunning={timerRunning}
-                  forceStop={forceStopTimer}
-                  onTimeUp={handleTimeUp}
-                  onStart={handleStartTimer}
-                  onStop={handlePauseTimer}
-                  onReset={handleResetTimer}
-                />
+                {/* Inline Timer Component */}
+                <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 flex flex-col items-center">
+                  <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-2">
+                    {timerIsPaused ? (
+                      <Button
+                        onClick={startTimer}
+                        className="bg-green-600 hover:bg-green-700 text-white text-sm md:text-base"
+                        size="sm"
+                        disabled={timerStopped}
+                      >
+                        <Play className="w-3 h-3 md:w-4 md:h-4 mr-1" /> ጀምርር
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={pauseTimer}
+                        className="bg-amber-600 hover:bg-amber-700 text-white text-sm md:text-base"
+                        size="sm"
+                      >
+                        <Pause className="w-3 h-3 md:w-4 md:h-4 mr-1" /> አቁም
+                      </Button>
+                    )}
+                    <Button
+                      onClick={resetTimer}
+                      variant="outline"
+                      size="sm"
+                      className="text-gray-600 text-sm md:text-base"
+                      disabled={timerStopped}
+                    >
+                      <RotateCcw className="w-3 h-3 md:w-4 md:h-4 mr-1" />{" "}
+                      ወደመጀመሪያ መልስ
+                    </Button>
+                  </div>
+
+                  <div className="relative w-40 h-40 md:w-48 lg:w-56 md:h-48 lg:h-56 mt-3 md:mt-4">
+                    {/* Background circle */}
+                    <svg className="w-full h-full" viewBox="0 0 170 170">
+                      <circle
+                        cx="85"
+                        cy="85"
+                        r={radius}
+                        fill="none"
+                        stroke="#f1f5f9"
+                        strokeWidth="12"
+                      />
+
+                      {/* Progress circle */}
+                      <circle
+                        cx="85"
+                        cy="85"
+                        r={radius}
+                        fill="none"
+                        stroke={getStrokeColor()}
+                        strokeWidth="12"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={strokeDashoffset}
+                        strokeLinecap="round"
+                        className="transition-all duration-1000 ease-linear"
+                        transform="rotate(-90 85 85)"
+                      />
+                    </svg>
+
+                    {/* Timer text in center */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-blue-900 font-mono">
+                        {formatTime(timeLeft)}
+                      </span>
+                      <div className="flex items-center justify-center text-gray-600">
+                        <Clock className="w-3 h-3 md:w-4 md:h-4 mr-1" />
+                        <span className="text-xs md:text-sm">ቀሪ ሰአት</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Answer Status */}
                 {isAnswered && isCorrect && (

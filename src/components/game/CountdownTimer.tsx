@@ -97,6 +97,7 @@ const CountdownTimer = forwardRef<CountdownTimerHandle, CountdownTimerProps>(
         startTimer();
       } else {
         pauseTimer();
+        stopTick(); // Stop any playing audio when timer is paused
       }
     }, [isRunning, forceStop]);
 
@@ -193,32 +194,10 @@ const CountdownTimer = forwardRef<CountdownTimerHandle, CountdownTimerProps>(
       }
     };
 
-    // Start the countdown when isRunning is true and forceStop is false
-    useEffect(() => {
-      // Clear existing interval if there is one
-      if (intervalRef.current !== null) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-
-      if (isRunning && !forceStop) {
-        startTimer();
-        // Don't play sound - disabled
-      } else {
-        // Stop any playing audio when timer is paused
-        stopTick();
-      }
-
-      return () => {
-        if (intervalRef.current !== null) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-
-        // Stop any playing audio when effect is cleaned up
-        stopTick();
-      };
-    }, [isRunning, forceStop, onTimeUp, duration]);
+    // NOTE: Removed duplicate useEffect that was causing race conditions
+    // The timer is now controlled by:
+    // 1. The useEffect at lines 95-101 for prop changes
+    // 2. The imperative handle methods (pause/start/reset) for direct control
 
     // Calculate progress percentage for the circle
     const progressPercentage = (timeLeft / duration) * 100;

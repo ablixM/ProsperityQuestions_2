@@ -1,15 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../components/ui/button";
 import { additionalQuestions } from "../data/additionalQuestions";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+const STORAGE_KEY = "readQuestions";
+
 function QuestionReaderPage() {
   const navigate = useNavigate();
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
+  const [readQuestions, setReadQuestions] = useState<number[]>([]);
+
+  // Load read questions from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setReadQuestions(parsed);
+        }
+      } catch (e) {
+        console.error("Failed to parse read questions from localStorage", e);
+      }
+    }
+  }, []);
+
+  // Save read questions to localStorage whenever they change
+  useEffect(() => {
+    if (readQuestions.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(readQuestions));
+    }
+  }, [readQuestions]);
 
   const handleNumberSelect = (number: number) => {
     setSelectedQuestion(number);
+
+    // Mark as read if not already
+    if (!readQuestions.includes(number)) {
+      setReadQuestions((prev) => [...prev, number]);
+    }
+
     // Scroll to question display
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
@@ -31,6 +62,12 @@ function QuestionReaderPage() {
     }, 100);
   };
 
+  // Clear all read questions
+  const handleClearReadHistory = () => {
+    setReadQuestions([]);
+    localStorage.removeItem(STORAGE_KEY);
+  };
+
   const question = selectedQuestion
     ? additionalQuestions[selectedQuestion - 1]
     : null;
@@ -38,15 +75,26 @@ function QuestionReaderPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 md:p-8">
       {/* Back to Home button */}
-      <Button
-        onClick={handleBackToHome}
-        variant="ghost"
-        className="mb-4 md:mb-8 text-blue-600 text-lg md:text-xl"
-      >
-        <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
-        <span className="hidden sm:inline">ወደ ተጫዋች ዝርዝር ተመለስ</span>
-        <span className="sm:hidden">ተመለስ</span>
-      </Button>
+      <div className="flex justify-between items-center mb-4 md:mb-8">
+        <Button
+          onClick={handleBackToHome}
+          variant="ghost"
+          className="text-blue-600 text-lg md:text-xl"
+        >
+          <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
+          <span className="hidden sm:inline">ወደ ተጫዋች ዝርዝር ተመለስ</span>
+          <span className="sm:hidden">ተመለስ</span>
+        </Button>
+        {readQuestions.length > 0 && (
+          <Button
+            onClick={handleClearReadHistory}
+            variant="outline"
+            className="text-red-600 border-red-300 hover:bg-red-50 text-sm md:text-base"
+          >
+            ታሪክ አጥፋ ({readQuestions.length})
+          </Button>
+        )}
+      </div>
 
       <div className="container mx-auto max-w-9xl">
         {/* Header */}
@@ -54,6 +102,9 @@ function QuestionReaderPage() {
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-blue-900">
             ጥያቄዎችን ያንብቡ
           </h2>
+          <p className="text-center text-gray-500 mt-2">
+            የተነበቡ ጥያቄዎች: {readQuestions.length} / {additionalQuestions.length}
+          </p>
         </div>
 
         {/* Number Grid */}
@@ -65,6 +116,7 @@ function QuestionReaderPage() {
               {additionalQuestions.map((_, index) => {
                 const number = index + 1;
                 const isSelected = selectedQuestion === number;
+                const isRead = readQuestions.includes(number);
 
                 return (
                   <button
@@ -73,10 +125,15 @@ function QuestionReaderPage() {
                     className={`aspect-square flex items-center justify-center text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold rounded-xl shadow-md transition-all duration-300 ${
                       isSelected
                         ? "bg-blue-500 text-white border-4 border-blue-600"
+                        : isRead
+                        ? "bg-teal-100 border-2 border-teal-400 text-teal-700 hover:bg-teal-200 hover:shadow-lg"
                         : "bg-gray-100 border-2 border-gray-300 text-gray-500 hover:bg-gray-200 hover:shadow-lg"
                     }`}
                   >
                     {number}
+                    {isRead && !isSelected && (
+                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-teal-500 rounded-full"></span>
+                    )}
                   </button>
                 );
               })}

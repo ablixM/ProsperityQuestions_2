@@ -119,7 +119,7 @@ const PlayerForm = () => {
               htmlFor="woreda"
               className="block text-sm md:text-lg font-medium text-gray-700 mb-1 md:mb-2"
             >
-              የህብረት ስም
+              ከፍለ ከተማ
             </label>
             <input
               type="text"
@@ -127,7 +127,7 @@ const PlayerForm = () => {
               value={woreda}
               onChange={handleWoredaChange}
               className="w-full px-3 py-2 md:px-4 md:py-3 text-sm md:text-lg border-2 border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="የህብረት ስም"
+              placeholder="ከፍለ ከተማ"
               required
             />
           </div>

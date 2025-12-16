@@ -68,10 +68,10 @@ function HomePage() {
       <ConfirmationDialog
         isOpen={isResetDialogOpen}
         onClose={() => setIsResetDialogOpen(false)}
-        title="Reset Progress"
-        message="Are you sure you want to reset all your progress? This action cannot be undone."
-        confirmLabel="Reset Progress"
-        cancelLabel="Cancel"
+        title="ሂደትን ዳግም አስጀምር"
+        message="ሁሉንም ሂደት ዳግም ማስጀመር ይፈልጋሉ? ይህ ድርጊት ሊቀለበስ አይችልም።"
+        confirmLabel="ሂደትን ዳግም አስጀምር"
+        cancelLabel="ይቅር"
         onConfirm={handleResetConfirm}
         variant="danger"
       />
@@ -80,10 +80,10 @@ function HomePage() {
       <ConfirmationDialog
         isOpen={isResetRoundTwoDialogOpen}
         onClose={() => setIsResetRoundTwoDialogOpen(false)}
-        title="Reset Round Two"
-        message="Are you sure you want to reset round two and return to round one? This will keep all round one data but clear round two progress."
-        confirmLabel="Reset Round Two"
-        cancelLabel="Cancel"
+        title="ዙር ሁለትን ዳግም አስጀምር"
+        message="ዙር ሁለትን ዳግም ማስጀመር እና ወደ ዙር አንድ መመለስ ይፈልጋሉ? ይህ የዙር አንድ መረጃን ይጠብቃል ግን የዙር ሁለት ሂደትን ያጠፋል።"
+        confirmLabel="ዙር ሁለትን ዳግም አስጀምር"
+        cancelLabel="ይቅር"
         onConfirm={handleResetRoundTwoConfirm}
         variant="danger"
       />
@@ -102,7 +102,7 @@ function HomePage() {
           {roundOneState && (
             <div className="bg-white/20 px-3 py-1 md:px-4 md:py-2 rounded-full mr-2 md:mr-4">
               <span className="text-white font-medium text-sm md:text-lg">
-                Round {currentRound}
+                ዙር {currentRound}
               </span>
             </div>
           )}
