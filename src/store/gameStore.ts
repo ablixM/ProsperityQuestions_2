@@ -81,7 +81,7 @@ export const useGameStore = create<GameState>()(
       currentPlayerId: null,
       completedNumbers: [],
       questionAnswers: {},
-      totalQuestions: 80, // Updated to match the total number of questions in questions.ts
+      totalQuestions: 86, // Updated to match the total number of questions in questions.ts
       tieBreakers: [],
 
       addPlayer: (
@@ -220,7 +220,7 @@ export const useGameStore = create<GameState>()(
           currentPlayerId: null,
           completedNumbers: [],
           questionAnswers: {},
-          totalQuestions: 80, // Updated to match the total number of questions in questions.ts
+          totalQuestions: 86, // Updated to match the total number of questions in questions.ts
           tieBreakers: [],
         });
       },
