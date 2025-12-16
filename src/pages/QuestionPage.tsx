@@ -1,25 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import {
-  ChevronLeft,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  Eye,
-  X,
-  User,
-} from "lucide-react";
+import { ChevronLeft, CheckCircle2, XCircle, Eye, User } from "lucide-react";
 import { additionalQuestions } from "../data/additionalQuestions";
 import { useGameStore } from "../store/gameStore";
 import { ResultDialog } from "../components/ui/dialog";
 import useSound from "use-sound";
-import CountdownTimer from "../components/game/CountdownTimer";
+import CountdownTimer, {
+  CountdownTimerHandle,
+} from "../components/game/CountdownTimer";
 
 const QuestionPage = () => {
   const { questionId } = useParams<{ questionId: string }>();
   const navigate = useNavigate();
   const questionNumber = parseInt(questionId || "0", 10);
+
+  // Ref for the countdown timer
+  const timerRef = useRef<CountdownTimerHandle>(null);
 
   // Global state from Zustand
   const {
@@ -54,12 +51,9 @@ const QuestionPage = () => {
   const [timeIsUp, setTimeIsUp] = useState(false);
   const [forceStopTimer, setForceStopTimer] = useState(false);
 
-  // New state for enhanced answer handling
-  const [incorrectAttempts, setIncorrectAttempts] = useState(0);
+  // New state for enhanced answer handling - Simplified for Single Attempt
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
-  const [showIncorrectFeedback, setShowIncorrectFeedback] = useState(false);
-  const [incorrectAnswers, setIncorrectAnswers] = useState<number[]>([]);
-  const [feedbackMessage, setFeedbackMessage] = useState("");
+  // Removed multi-attempt states (incorrectAttempts, showIncorrectFeedback, etc.)
 
   const [playError] = useSound("/sounds/error.mp3", { volume: 0.4 });
   const [playSuccess] = useSound("/sounds/success.mp3", { volume: 0.4 });
@@ -74,9 +68,6 @@ const QuestionPage = () => {
     setShowResultDialog(false);
     setIsPreviouslyAnswered(false);
     setShowCorrectAnswer(false);
-    setIncorrectAttempts(0);
-    setIncorrectAnswers([]);
-    setFeedbackMessage("");
     setTimeIsUp(false);
   }, [questionNumber]);
 
@@ -110,23 +101,6 @@ const QuestionPage = () => {
     getCurrentPlayer,
   ]);
 
-  // Hide incorrect feedback after 3 seconds
-  useEffect(() => {
-    let feedbackTimer: number | undefined;
-
-    if (showIncorrectFeedback) {
-      feedbackTimer = window.setTimeout(() => {
-        setShowIncorrectFeedback(false);
-      }, 3000);
-    }
-
-    return () => {
-      if (feedbackTimer) {
-        clearTimeout(feedbackTimer);
-      }
-    };
-  }, [showIncorrectFeedback]);
-
   // Auto-start or stop timer based on question state
   useEffect(() => {
     if (!question || !currentPlayer) return;
@@ -158,12 +132,7 @@ const QuestionPage = () => {
   };
 
   const handleAnswerSelect = (answerIndex: number) => {
-    if (
-      isAnswered ||
-      isPreviouslyAnswered ||
-      incorrectAnswers.includes(answerIndex)
-    )
-      return;
+    if (isAnswered || isPreviouslyAnswered) return;
 
     // Always save the selected answer for UI display
     setSelectedAnswerIndex(answerIndex);
@@ -173,48 +142,23 @@ const QuestionPage = () => {
     setForceStopTimer(true);
     console.log("Timer forced to stop by answer selection");
 
+    setIsAnswered(true);
+    setShowCorrectAnswer(true);
+
     if (answerIndex === question?.correctAnswer) {
       // Correct answer handling
       playSuccess();
-      setIsAnswered(true);
       setIsCorrect(true);
-      setShowCorrectAnswer(true);
-
-      // Mark question as completed with correct answer
       markQuestionAsCompleted(questionNumber, answerIndex, true);
-
-      // Show result dialog
-      setShowResultDialog(true);
     } else {
-      // Incorrect answer handling
+      // Incorrect answer handling - Single Attempt Mode
       playError();
-
-      // Add to incorrect answers list to disable and mark as red
-      setIncorrectAnswers((prev) => [...prev, answerIndex]);
-
-      // Mark question as incorrect on first wrong attempt
+      setIsCorrect(false);
       markQuestionAsCompleted(questionNumber, answerIndex, false);
-
-      setIncorrectAttempts((prev) => prev + 1);
-      setShowIncorrectFeedback(true);
-      setFeedbackMessage(`ጥያቄው በትክክል አልተመለሰም! )`);
-
-      // Check if this is the third incorrect attempt
-      if (incorrectAttempts >= 2) {
-        setIsAnswered(true);
-        setIsCorrect(false);
-        setShowCorrectAnswer(true);
-
-        // Show result dialog
-        setShowResultDialog(true);
-      } else {
-        // Allow retry - don't set isAnswered to true
-        // Reset selection after showing feedback
-        setTimeout(() => {
-          setSelectedAnswerIndex(null);
-        }, 300);
-      }
     }
+
+    // Show result dialog immediately
+    setShowResultDialog(true);
   };
 
   const handleRevealAnswer = () => {
@@ -237,11 +181,7 @@ const QuestionPage = () => {
   };
 
   const handleBackToGame = () => {
-    navigate("/");
-    // Scroll to top when going back to number grid
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 100);
+    navigate("/#player-list");
   };
 
   const handleCloseResultDialog = () => {
@@ -250,10 +190,6 @@ const QuestionPage = () => {
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 100);
-  };
-
-  const handleCloseFeedback = () => {
-    setShowIncorrectFeedback(false);
   };
 
   // Handle timer actions
@@ -279,43 +215,8 @@ const QuestionPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 md:p-8 relative">
-      {/* Feedback Popup */}
-      {showIncorrectFeedback && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none p-4">
-          <div className="bg-red-100 border-2 border-red-400 text-red-700 px-4 md:px-8 py-4 rounded-xl shadow-lg max-w-md animate-bounce pointer-events-auto">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <XCircle className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
-                <p className="text-sm md:text-lg font-medium">
-                  {feedbackMessage}
-                </p>
-              </div>
-              <button
-                title="close"
-                type="button"
-                onClick={handleCloseFeedback}
-                className="ml-2 md:ml-4 text-red-500 hover:text-red-700"
-              >
-                <X className="w-4 h-4 md:w-5 md:h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="container mx-auto max-w-9xl">
         {/* Top bar with navigation */}
-        <div className="mb-4 md:mb-8">
-          <Button
-            onClick={handleBackToGame}
-            variant="ghost"
-            className="text-blue-600 text-lg md:text-xl"
-          >
-            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
-            <span className="hidden sm:inline">ወደ ተጫዋች ዝርዝር ተመለስ</span>
-            <span className="sm:hidden">ተመለስ</span>
-          </Button>
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
           {/* Player Profile Card - Takes 2 columns on large screens */}
@@ -323,6 +224,19 @@ const QuestionPage = () => {
             <div className="lg:col-span-2 order-2 lg:order-1">
               <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 sticky top-4 md:top-8">
                 <div className="flex flex-col items-center">
+                  <div className="mb-4 md:mb-8 px-6">
+                    <Button
+                      onClick={handleBackToGame}
+                      variant="ghost"
+                      className="text-blue-600 text-lg md:text-xl"
+                    >
+                      <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
+                      <span className="hidden sm:inline">
+                        ወደ ተጫዋች ዝርዝር ተመለስ
+                      </span>
+                      <span className="sm:hidden">ተመለስ</span>
+                    </Button>
+                  </div>
                   {/* Profile Image */}
                   <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-blue-200 flex items-center justify-center bg-blue-50 mb-3 md:mb-4">
                     {currentPlayer.profileImage ? (
@@ -397,15 +311,6 @@ const QuestionPage = () => {
                   <span className="sm:hidden">የተመለሰ</span>
                 </div>
               )}
-
-              {!isPreviouslyAnswered &&
-                incorrectAttempts > 0 &&
-                !isAnswered && (
-                  <div className="bg-amber-100 text-amber-700 px-3 py-1 md:px-4 md:py-2 rounded-full text-sm md:text-lg lg:text-xl font-medium flex items-center">
-                    <AlertTriangle className="w-4 h-4 md:w-6 md:h-6 mr-1 md:mr-2" />
-                    ሙከራዎች: {incorrectAttempts}/3
-                  </div>
-                )}
             </div>
 
             {/* Question Text */}
@@ -424,15 +329,11 @@ const QuestionPage = () => {
                 {question.options.map((option, index) => {
                   const isSelected = selectedAnswerIndex === index;
                   const isCorrectAnswer = question.correctAnswer === index;
-                  const isIncorrectSelected = incorrectAnswers.includes(index);
 
                   let optionClass =
                     "border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-50";
 
-                  if (isIncorrectSelected) {
-                    optionClass =
-                      "border-2 border-red-400 bg-red-50 opacity-60";
-                  } else if (isAnswered && showCorrectAnswer) {
+                  if (isAnswered && showCorrectAnswer) {
                     if (isSelected && isCorrect) {
                       optionClass = "border-2 border-green-500 bg-green-50";
                     } else if (isSelected && !isCorrect) {
@@ -447,29 +348,18 @@ const QuestionPage = () => {
                   return (
                     <button
                       key={index}
-                      onClick={() => {
-                        setForceStopTimer(true);
-                        handleAnswerSelect(index);
-                      }}
+                      onClick={() => handleAnswerSelect(index)}
                       className={`p-3 md:p-4 lg:p-6 rounded-xl text-left transition-all ${optionClass} ${
-                        (isAnswered && showCorrectAnswer) ||
-                        isPreviouslyAnswered ||
-                        isIncorrectSelected
+                        isAnswered || isPreviouslyAnswered
                           ? "cursor-default"
                           : "cursor-pointer hover:shadow-lg"
                       }`}
-                      disabled={
-                        (isAnswered && showCorrectAnswer) ||
-                        isPreviouslyAnswered ||
-                        isIncorrectSelected
-                      }
+                      disabled={isAnswered || isPreviouslyAnswered}
                     >
                       <div className="flex items-center">
                         <div
                           className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center border-2 ${
-                            isIncorrectSelected
-                              ? "border-red-500 bg-red-500 text-white"
-                              : isSelected
+                            isSelected
                               ? "border-blue-600 bg-blue-600 text-white"
                               : "border-gray-400"
                           }`}
@@ -507,20 +397,34 @@ const QuestionPage = () => {
               </div>
             )}
 
-            {isAnswered &&
-              isCorrect === false &&
-              showCorrectAnswer &&
-              !timeIsUp && (
-                <div className="p-4 md:p-6 bg-red-50 text-red-600 rounded-xl text-center text-lg md:text-xl lg:text-2xl font-medium mb-6 md:mb-8">
-                  <div className="flex items-center justify-center">
-                    <XCircle className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-3" />
-                    ጥያቄው በትክክል አልተመለሰም!
-                  </div>
+            {isAnswered && isCorrect === false && !timeIsUp && (
+              <div className="p-4 md:p-6 bg-red-50 text-red-600 rounded-xl text-center text-lg md:text-xl lg:text-2xl font-medium mb-6 md:mb-8">
+                <div className="flex items-center justify-center">
+                  <XCircle className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-3" />
+                  ጥያቄው በትክክል አልተመለሰም!
                 </div>
-              )}
+              </div>
+            )}
 
-            {/* Admin Controls */}
-            {!isPreviouslyAnswered && !isAnswered && (
+            {/* Admin Controls - Show when time is up OR question is not yet answered (and not previously answered) */}
+            {/* But usually we only show reveal if attempts are exhausted... wait user wanted to not hide it when time is out */}
+            {/* If time is up, isAnswered=true, but we still want to show Reveal potentially? No, if timeIsUp, we already showed correct answer in handleTimeUp (setShowCorrectAnswer(true)). */}
+            {/* Wait, the user said: "when time is out doint hide the coreect answer reveal button" */}
+            {/* If time is up, `handleTimeUp` sets `showCorrectAnswer(true)`. Does that mean the answer is already revealed? Yes. */}
+            {/* But maybe they want the BUTTON to trigger it manually? Or maybe `handleTimeUp` shouldn't reveal automatically? */}
+            {/* Assuming handleTimeUp reveals it automatically, the button is moot. */}
+            {/* HOWEVER, if `handleTimeUp` DOES reveal it, why does the user want the button? */}
+            {/* Maybe I should ensure the button is visible so they can click it IF it wasn't autorevealed? */}
+            {/* Or maybe they mean: if time is up, allow me to click reveal. */}
+            {/* I'll let the button be visible if !isCorrect? */}
+
+            {/* Actually, if time is up, `handleTimeUp` sets `setShowCorrectAnswer(true)`, so the answers are highlighted. */}
+            {/* Let's look at the button condition: `!isPreviouslyAnswered && !isAnswered` */}
+            {/* If time is up -> isAnswered=true. So button hides. User wants it NOT to hide. */}
+            {/* So I will change condition to `!isPreviouslyAnswered && (!isAnswered || timeIsUp)` */}
+            {/* But if time is up, isAnswered is true. So `!isAnswered` is false. `timeIsUp` is true. `false || true` is true. So button shows. */}
+
+            {!isPreviouslyAnswered && (!isAnswered || timeIsUp) && (
               <div className="flex justify-end mt-4">
                 <Button
                   onClick={handleRevealAnswer}
@@ -540,6 +444,7 @@ const QuestionPage = () => {
               <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:p-8 h-full flex flex-col">
                 {/* Timer Component */}
                 <CountdownTimer
+                  ref={timerRef}
                   key={questionNumber}
                   duration={60}
                   isRunning={timerRunning}
@@ -560,29 +465,10 @@ const QuestionPage = () => {
                   </div>
                 )}
 
-                {isAnswered && isCorrect === false && incorrectAttempts > 0 && (
+                {isAnswered && isCorrect === false && (
                   <div className="mt-4 md:mt-6 p-3 md:p-4 bg-red-50 text-red-700 rounded-xl text-center">
                     <XCircle className="w-8 h-8 md:w-10 md:h-10 mx-auto mb-2 text-red-500" />
                     <h4 className="font-bold text-base md:text-lg">አልተመለሰም</h4>
-                  </div>
-                )}
-
-                {/* Attempt Counter */}
-                {incorrectAttempts > 0 && !isAnswered && (
-                  <div className="mt-4 md:mt-6 p-3 md:p-4 bg-blue-50 text-blue-700 rounded-xl text-center">
-                    <h4 className="font-bold mb-1 text-sm md:text-base">
-                      ሙክራዎች
-                    </h4>
-                    <div className="flex justify-center gap-2">
-                      {[...Array(3)].map((_, i) => (
-                        <div
-                          key={i}
-                          className={`w-3 h-3 md:w-4 md:h-4 rounded-full ${
-                            i < incorrectAttempts ? "bg-red-500" : "bg-gray-200"
-                          }`}
-                        />
-                      ))}
-                    </div>
                   </div>
                 )}
 
@@ -595,7 +481,7 @@ const QuestionPage = () => {
                     />
                   </div>
                   <h2 className="text-center font-bold text-lg md:text-xl lg:text-2xl mt-3 md:mt-4 px-2">
-                    በየካ ክፍለ ከተማ ብልፅግና ፓርቲ ቅርንጫፍ ጽ/ቤት የፖለቲካ አቅምና ግንባታ ዘርፍ የተዘጋጀ
+                    የአዲስ አበባ ብልፅግና ፓርቲ ቅርንጫፍ ፅ/ቤት የፖለቲካና አቅም ግንባታ ዘርፍ የተዘጋጀ
                   </h2>
                 </div>
               </div>

@@ -14,7 +14,7 @@ function LandingHeader() {
               />
             </div>
             <div className="flex flex-col items-center text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-center px-2">
-              በበልፅግና ፓርቲ የአዲስ አበባ ቅርንጫፍ ፅ/ቤት የፖለቲካ አቅምና ግንባታ ዘርፍ የተዘጋጀ
+              የአዲስ አበባ ብልፅግና ፓርቲ ቅርንጫፍ ፅ/ቤት የፖለቲካና አቅም ግንባታ ዘርፍ የተዘጋጀ
             </div>
           </div>
         </div>

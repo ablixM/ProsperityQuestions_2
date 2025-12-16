@@ -29,11 +29,6 @@ const NumberGrid: FC<NumberGridProps> = ({
   // Generate numbers array from 1 to totalNumbers
   const numbers = Array.from({ length: totalNumbers }, (_, i) => i + 1);
 
-  // Determine grid columns based on totalNumbers
-  const getGridCols = () => {
-    return "grid-cols-3 md:grid-cols-66 lg:grid-cols-10";
-  };
-
   // Calculate player's question limit
   const playerQuestionLimit = currentPlayer ? getMaxQuestionsPerPlayer() : 0;
   const isPlayerInTieBreaker = currentPlayer
@@ -41,57 +36,59 @@ const NumberGrid: FC<NumberGridProps> = ({
     : false;
 
   return (
-    <div className="w-full flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8">
-      {/* Player Info Section */}
+    <div className="w-full h-full flex flex-col lg:flex-row gap-4 overflow-hidden">
+      {/* Player Info Section - Scrollable if needed, fixing fit */}
       {currentPlayer && (
-        <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:w-[350px] flex-shrink-0">
-          <div className="flex flex-col items-center justify-center space-y-3 md:space-y-4">
-            {/* Profile Image */}
-            <div className="w-24 h-24 md:w-28 lg:w-32 h-24 md:h-28 lg:h-32 rounded-full overflow-hidden border-4 border-blue-200 flex items-center justify-center bg-blue-50">
-              {currentPlayer.profileImage ? (
-                <img
-                  src={currentPlayer.profileImage}
-                  alt={`${currentPlayer.name}'s profile`}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <User className="w-12 h-12 md:w-14 lg:w-16 h-12 md:h-14 lg:h-16 text-blue-400" />
-              )}
-            </div>
-
-            {/* Player Details */}
-            <div className="flex flex-col items-center text-center w-full">
-              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-900 mb-2 md:mb-3">
-                {currentPlayer.name}
-              </h2>
-              <div className="flex flex-col w-full gap-2 md:gap-3">
-                {currentPlayer.woreda && (
-                  <div className="bg-blue-100 text-blue-800 px-3 py-1 md:px-4 md:py-2 rounded-full text-lg md:text-xl font-bold">
-                    የህብረት ስም፡ {currentPlayer.woreda}
-                  </div>
+        <div className="flex-none lg:flex-1 lg:max-w-xs overflow-y-auto custom-scrollbar">
+          <div className="bg-white rounded-xl shadow-lg p-2 md:p-4 border border-blue-100 h-full">
+            <div className="flex flex-row lg:flex-col items-center gap-3 lg:gap-4 lg:space-y-2">
+              {/* Profile Image - Responsive Size */}
+              <div className="flex-none w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden border-2 md:border-4 border-blue-200 bg-blue-50 flex items-center justify-center">
+                {currentPlayer.profileImage ? (
+                  <img
+                    src={currentPlayer.profileImage}
+                    alt={`${currentPlayer.name}'s profile`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-blue-400" />
                 )}
-                <div className="bg-green-100 text-green-800 px-3 py-1 md:px-4 md:py-2 rounded-full text-lg md:text-xl font-bold">
-                  {currentPlayer.score} ነጥቦች
+              </div>
+
+              {/* Player Details */}
+              <div className="flex-1 flex flex-col lg:items-center text-left lg:text-center min-w-0">
+                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-blue-900 truncate w-full">
+                  {currentPlayer.name}
+                </h2>
+                <div className="flex flex-wrap gap-2 mt-1 justify-start lg:justify-center">
+                  {currentPlayer.woreda && (
+                    <div className="bg-blue-100 text-blue-800 text-xs md:text-sm px-2 py-1 rounded-full font-semibold truncate max-w-[120px]">
+                      {currentPlayer.woreda}
+                    </div>
+                  )}
+                  <div className="bg-green-100 text-green-800 text-xs md:text-sm px-2 py-1 rounded-full font-semibold whitespace-nowrap">
+                    {currentPlayer.score} ነጥቦች
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Progress Stats */}
-            <div className="grid grid-cols-2 gap-3 md:gap-4 w-full mt-3 md:mt-4">
-              <div className="bg-blue-50 p-3 md:p-4 rounded-xl text-center">
-                <p className="text-blue-500 text-sm md:text-base lg:text-lg font-medium">
+            {/* Progress Stats - Compact Grid */}
+            <div className="grid grid-cols-2 gap-2 mt-2 lg:mt-6 w-full">
+              <div className="bg-blue-50 p-2 rounded-lg text-center">
+                <p className="text-blue-500 text-xs font-medium uppercase">
                   ጥያቄዎች
                 </p>
-                <p className="text-lg md:text-xl lg:text-2xl font-bold text-blue-800">
+                <p className="text-base md:text-lg font-bold text-blue-800 truncate">
                   {currentPlayer.questionsAnswered.length}/{playerQuestionLimit}
-                  {isPlayerInTieBreaker && " + ታይ"}
+                  {isPlayerInTieBreaker && " +"}
                 </p>
               </div>
-              <div className="bg-green-50 p-3 md:p-4 rounded-xl text-center">
-                <p className="text-green-500 text-sm md:text-base lg:text-lg font-medium">
+              <div className="bg-green-50 p-2 rounded-lg text-center">
+                <p className="text-green-500 text-xs font-medium uppercase">
                   ትክክል
                 </p>
-                <p className="text-lg md:text-xl lg:text-2xl font-bold text-green-800">
+                <p className="text-base md:text-lg font-bold text-green-800">
                   {currentPlayer.correctAnswers}
                 </p>
               </div>
@@ -100,16 +97,16 @@ const NumberGrid: FC<NumberGridProps> = ({
         </div>
       )}
 
-      {/* Number Grid */}
-      <div className="flex-grow">
+      {/* Number Grid - Flex Grow & Scrollable */}
+      <div className="flex-1 h-full min-h-0 overflow-y-auto custom-scrollbar p-1">
         <div
-          className={`grid ${getGridCols()} gap-4 md:gap-6 lg:gap-8 w-full mx-auto`}
+          className={`grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2 md:gap-3 lg:gap-4 w-full auto-rows-min`}
         >
           {numbers.map((number, index) => {
             const isCompleted = completedNumbers.includes(number);
             const isHighlighted = highlightedNumbers.includes(number);
             const isTieBreaker = tieBreakers.includes(number);
-            const animationDelay = `${index * 0.1}s`;
+            const animationDelay = `${index * 0.05}s`;
 
             return (
               <button
@@ -118,18 +115,18 @@ const NumberGrid: FC<NumberGridProps> = ({
                 disabled={isCompleted}
                 style={{ animationDelay }}
                 className={`
-                  aspect-square flex items-center justify-center text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold rounded-xl md:rounded-xl
-                  shadow-md transition-all duration-300
+                  aspect-square flex items-center justify-center text-xl md:text-2xl lg:text-3xl font-bold rounded-lg md:rounded-xl
+                  shadow-sm md:shadow-md transition-all duration-200
                   ${
                     isCompleted
-                      ? "bg-green-100 text-green-700 border-4 border-green-500 cursor-not-allowed opacity-80"
+                      ? "bg-green-100 text-green-700 border-2 border-green-500 cursor-not-allowed opacity-70"
                       : isHighlighted && isTieBreaker
-                      ? "bg-purple-100 border-4 border-purple-500 text-purple-900 hover:bg-purple-200 hover:shadow-lg animate-pulse"
+                      ? "bg-purple-100 border-2 md:border-4 border-purple-500 text-purple-900 hover:bg-purple-200 hover:shadow-lg animate-pulse"
                       : isHighlighted
-                      ? "bg-blue-100 border-4 border-blue-500 text-blue-900 hover:bg-blue-200 hover:shadow-lg animate-pulse"
+                      ? "bg-blue-100 border-2 md:border-4 border-blue-500 text-blue-900 hover:bg-blue-200 hover:shadow-lg animate-pulse"
                       : isTieBreaker
-                      ? "bg-gray-100 border-2 border-purple-300 text-purple-500 hover:bg-gray-200 hover:shadow-md"
-                      : "bg-gray-100 border-2 border-gray-300 text-gray-500 hover:bg-gray-200 hover:shadow-md"
+                      ? "bg-gray-100 border border-purple-300 text-purple-500 hover:bg-gray-200 hover:shadow-md"
+                      : "bg-gray-100 border border-gray-300 text-gray-500 hover:bg-gray-200 hover:shadow-md"
                   }
                   relative
                   animate-fade-in hover:scale-105 active:scale-95
@@ -142,17 +139,17 @@ const NumberGrid: FC<NumberGridProps> = ({
               >
                 {number}
                 {isCompleted && (
-                  <span className="absolute -top-3 -right-3 bg-green-500 text-white w-10 h-10 rounded-full text-lg flex items-center justify-center animate-bounce">
+                  <span className="absolute -top-2 -right-2 md:-top-3 md:-right-3 bg-green-500 text-white w-6 h-6 md:w-8 md:h-8 rounded-full text-sm md:text-base flex items-center justify-center shadow-sm">
                     ✓
                   </span>
                 )}
                 {!isCompleted && isHighlighted && (
-                  <span className="absolute -top-3 -right-3 bg-blue-500 text-white w-10 h-10 rounded-full text-lg flex items-center justify-center animate-ping-slow">
+                  <span className="absolute -top-2 -right-2 md:-top-3 md:-right-3 bg-blue-500 text-white w-6 h-6 md:w-8 md:h-8 rounded-full text-sm md:text-base flex items-center justify-center animate-ping-slow shadow-sm">
                     !
                   </span>
                 )}
                 {isTieBreaker && !isCompleted && (
-                  <span className="absolute -top-3 -left-3 bg-purple-500 text-white w-8 h-8 rounded-full text-xs flex items-center justify-center">
+                  <span className="absolute -top-2 -left-2 md:-top-3 md:-left-3 bg-purple-500 text-white w-6 h-6 md:w-8 md:h-8 rounded-full text-[10px] md:text-xs flex items-center justify-center shadow-sm">
                     TIE
                   </span>
                 )}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../components/ui/button";
 import { useGameStore } from "../store/gameStore";
 import { ConfirmationDialog } from "../components/ui/dialog";
@@ -6,7 +6,7 @@ import PlayerForm from "../components/players/PlayerForm";
 import PlayerList from "../components/players/PlayerList";
 import { Users, BarChart, BookOpen } from "lucide-react";
 import PlayerStatusModal from "../components/PlayerStatusModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function HomePage() {
   const {
@@ -18,6 +18,7 @@ function HomePage() {
     resetRoundTwo,
   } = useGameStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [showPlayerStatus, setShowPlayerStatus] = useState(false);
   const [isResetRoundTwoDialogOpen, setIsResetRoundTwoDialogOpen] =
@@ -44,6 +45,20 @@ function HomePage() {
   const handleNavigateToQuestionReader = () => {
     navigate("/question-reader");
   };
+
+  // Scroll to player list if coming from question page
+  useEffect(() => {
+    if (location.hash === "#player-list") {
+      setTimeout(() => {
+        const playerListSection = document.querySelector(
+          ".player-list-section"
+        );
+        if (playerListSection) {
+          playerListSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, [location]);
 
   return (
     <div className="relative min-h-screen flex flex-col">
@@ -120,8 +135,8 @@ function HomePage() {
               የአስተሳሰብና የተግባር አንድነት ለጠንካራ ፓርቲ
             </p>
             <h1 className="text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-blue-900 mb-6 md:mb-12 z-50 leading-tight px-2">
-              በብልፅግና ፓርቲ የየካ ክፍለ ከተማ ቅርንጫፍ ፅ/ቤት የፖለቲካና አቅም ግንባታ ዘርፍ የተዘጋጀ
-              የአሸናፊዎች አሸናፊ የጥያቄና መልስ የማጠቃለያ ውድድር
+              የአዲስ አበባ ብልፅግና ፓርቲ ቅርንጫፍ ፅ/ቤት የፖለቲካና አቅም ግንባታ ዘርፍ የተዘጋጀ የአሸናፊዎች
+              አሸናፊ የጥያቄና መልስ የማጠቃለያ ውድድር
             </h1>
 
             {/* Player Management Section */}

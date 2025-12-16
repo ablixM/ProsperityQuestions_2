@@ -163,50 +163,53 @@ function GamePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 md:p-8">
+    <div className="h-screen w-screen overflow-hidden bg-gradient-to-b from-blue-50 to-white p-2 md:p-4 flex flex-col">
       {/* Back to Home button */}
-      <Button
-        onClick={handleBackToHome}
-        variant="ghost"
-        className="mb-4 md:mb-8 text-blue-600 text-lg md:text-xl"
-      >
-        <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
-        <span className="hidden sm:inline">ወደ ተጫዋች ዝርዝር ተመለስ</span>
-        <span className="sm:hidden">ተመለስ</span>
-      </Button>
+      <div className="flex-none mb-2 md:mb-4">
+        <Button
+          onClick={handleBackToHome}
+          variant="ghost"
+          className="text-blue-600 text-base md:text-lg"
+        >
+          <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 mr-1" />
+          <span className="hidden sm:inline">ወደ ተጫዋች ዝርዝር ተመለስ</span>
+          <span className="sm:hidden">ተመለስ</span>
+        </Button>
+      </div>
 
-      <div className="mx-auto max-w-9xl">
-        {/* Game Content */}
-        <div className="mb-6 md:mb-10">
-          <div className="flex items-center justify-center mb-6 md:mb-8 px-2">
-            <Users className="w-6 h-6 md:w-8 md:h-8 text-blue-700 mr-2 md:mr-3" />
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-blue-900">
-              {currentPlayer
-                ? `${currentPlayer.name}, select a question`
-                : "Select a question"}
-            </h2>
-          </div>
+      <div className="flex-1 min-h-0 flex flex-col w-full max-w-7xl mx-auto">
+        {/* Header - Compact */}
+        <div className="flex-none flex items-center justify-center mb-2 md:mb-4 px-2">
+          <Users className="w-5 h-5 md:w-6 md:h-6 text-blue-700 mr-2" />
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-center text-blue-900 truncate">
+            {currentPlayer
+              ? `${currentPlayer.name}, select a question`
+              : "Select a question"}
+          </h2>
+        </div>
 
-          <div className="relative bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:p-10">
-            {availableQuestions.length === 0 && tieBreakers.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-10 rounded-xl">
-                <div className="text-center p-4 md:p-8">
-                  <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800 mb-4">
-                    ሁሉም ጥያቄዎች ተመልሰዋል
-                  </h3>
-                  <p className="text-lg md:text-xl lg:text-2xl text-gray-600 mb-4 md:mb-6">
-                    ተጫዋቹ ሁሉንም ጥያቄዎች መልሷል
-                  </p>
-                  <Button
-                    onClick={handleBackToHome}
-                    className="bg-blue-600 text-lg md:text-xl px-4 py-2 md:px-6 md:py-3"
-                  >
-                    ወደ ተጫዋች ዝርዝር ተመለስ
-                  </Button>
-                </div>
+        {/* Game Content - Flex Grow */}
+        <div className="flex-1 min-h-0 relative bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
+          {availableQuestions.length === 0 && tieBreakers.length === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-20 rounded-xl">
+              <div className="text-center p-4 md:p-8">
+                <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800 mb-4">
+                  ሁሉም ጥያቄዎች ተመልሰዋል
+                </h3>
+                <p className="text-lg md:text-xl lg:text-2xl text-gray-600 mb-4 md:mb-6">
+                  ተጫዋቹ ሁሉንም ጥያቄዎች መልሷል
+                </p>
+                <Button
+                  onClick={handleBackToHome}
+                  className="bg-blue-600 text-lg md:text-xl px-4 py-2 md:px-6 md:py-3"
+                >
+                  ወደ ተጫዋች ዝርዝር ተመለስ
+                </Button>
               </div>
-            )}
+            </div>
+          )}
 
+          <div className="w-full h-full p-2 md:p-4 lg:p-6 overflow-hidden">
             <NumberGrid
               totalNumbers={additionalQuestions.length}
               onSelectNumber={handleNumberSelect}
