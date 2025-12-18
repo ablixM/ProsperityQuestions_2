@@ -1,6 +1,5 @@
 import { FC } from "react";
-import { useGameStore } from "../../store/gameStore";
-import { User } from "lucide-react";
+// import { useGameStore } from "../../store/gameStore";
 
 interface NumberGridProps {
   totalNumbers: number;
@@ -17,23 +16,23 @@ const NumberGrid: FC<NumberGridProps> = ({
   highlightedNumbers = [],
   tieBreakers = [],
 }) => {
-  const currentPlayer = useGameStore((state) => state.getCurrentPlayer());
+  // const currentPlayer = useGameStore((state) => state.getCurrentPlayer());
 
-  const getMaxQuestionsPerPlayer = useGameStore(
-    (state) => state.getMaxQuestionsPerPlayer
-  );
-  const hasPlayerReachedMaxQuestions = useGameStore(
-    (state) => state.hasPlayerReachedMaxQuestions
-  );
+  // const getMaxQuestionsPerPlayer = useGameStore(
+  //   (state) => state.getMaxQuestionsPerPlayer
+  // );
+  // const hasPlayerReachedMaxQuestions = useGameStore(
+  //   (state) => state.hasPlayerReachedMaxQuestions
+  // );
 
   // Generate numbers array from 1 to totalNumbers
   const numbers = Array.from({ length: totalNumbers }, (_, i) => i + 1);
 
   // Calculate player's question limit
-  const playerQuestionLimit = currentPlayer ? getMaxQuestionsPerPlayer() : 0;
-  const isPlayerInTieBreaker = currentPlayer
-    ? hasPlayerReachedMaxQuestions(currentPlayer.id)
-    : false;
+  // const playerQuestionLimit = currentPlayer ? getMaxQuestionsPerPlayer() : 0;
+  // const isPlayerInTieBreaker = currentPlayer
+  //   ? hasPlayerReachedMaxQuestions(currentPlayer.id)
+  //   : false;
 
   // Calculate rows based on columns (10 columns on lg screens)
   const cols = 10;
@@ -42,11 +41,11 @@ const NumberGrid: FC<NumberGridProps> = ({
   return (
     <div className="w-full h-full flex flex-col lg:flex-row gap-2 md:gap-4 overflow-hidden">
       {/* Player Info Section - Compact, no scroll */}
-      {currentPlayer && (
+      {/* {currentPlayer && (
         <div className="flex-none lg:w-64 xl:w-72">
           <div className="bg-white rounded-xl shadow-lg p-2 md:p-4 border border-blue-100 h-full">
             <div className="flex flex-row lg:flex-col items-center gap-3 lg:gap-4 lg:space-y-2">
-              {/* Profile Image - Responsive Size */}
+           
               <div className="flex-none w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden border-2 md:border-4 border-blue-200 bg-blue-50 flex items-center justify-center">
                 {currentPlayer.profileImage ? (
                   <img
@@ -59,7 +58,7 @@ const NumberGrid: FC<NumberGridProps> = ({
                 )}
               </div>
 
-              {/* Player Details */}
+              
               <div className="flex-1 flex flex-col lg:items-center text-left lg:text-center min-w-0">
                 <h2 className="text-base md:text-lg lg:text-xl font-bold text-blue-900 truncate w-full">
                   {currentPlayer.name}
@@ -77,7 +76,7 @@ const NumberGrid: FC<NumberGridProps> = ({
               </div>
             </div>
 
-            {/* Progress Stats - Compact Grid */}
+       
             <div className="grid grid-cols-2 gap-2 mt-2 lg:mt-4 w-full">
               <div className="bg-blue-50 p-1.5 md:p-2 rounded-lg text-center">
                 <p className="text-blue-500 text-[10px] md:text-xs font-medium uppercase">
@@ -99,12 +98,12 @@ const NumberGrid: FC<NumberGridProps> = ({
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Number Grid - Flex Grow, scrollable on small screens */}
       <div className="flex-1 min-h-0 min-w-0 overflow-auto">
         <div
-          className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1.5 sm:gap-2 md:gap-2 w-full"
+          className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-10 lg:grid-cols-12 gap-1.5 sm:gap-2 md:gap-2 w-full md:p-2"
           style={{
             // On small screens: use fixed row height for scrolling
             // On larger screens: use 1fr to fit screen

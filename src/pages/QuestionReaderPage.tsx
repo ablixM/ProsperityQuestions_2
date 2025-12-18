@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "../components/ui/button";
-import { additionalQuestions } from "../data/additionalQuestions";
+import { prosperityQuestions } from "../data/prosperityQuestions";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -69,7 +69,7 @@ function QuestionReaderPage() {
   };
 
   const question = selectedQuestion
-    ? additionalQuestions[selectedQuestion - 1]
+    ? prosperityQuestions[selectedQuestion - 1]
     : null;
 
   return (
@@ -103,7 +103,7 @@ function QuestionReaderPage() {
             ጥያቄዎችን ያንብቡ
           </h2>
           <p className="text-center text-gray-500 mt-2">
-            የተነበቡ ጥያቄዎች: {readQuestions.length} / {additionalQuestions.length}
+            የተነበቡ ጥያቄዎች: {readQuestions.length} / {prosperityQuestions.length}
           </p>
         </div>
 
@@ -113,7 +113,7 @@ function QuestionReaderPage() {
             <div
               className={`grid grid-cols-3 md:grid-cols-6 lg:grid-cols-10 gap-3 md:gap-4 lg:gap-6 w-full mx-auto`}
             >
-              {additionalQuestions.map((_, index) => {
+              {prosperityQuestions.map((_, index) => {
                 const number = index + 1;
                 const isSelected = selectedQuestion === number;
                 const isRead = readQuestions.includes(number);

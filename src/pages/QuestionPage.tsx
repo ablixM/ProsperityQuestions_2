@@ -12,7 +12,7 @@ import {
   RotateCcw,
   Clock,
 } from "lucide-react";
-import { additionalQuestions } from "../data/additionalQuestions";
+import { prosperityQuestions } from "../data/prosperityQuestions";
 import { useGameStore } from "../store/gameStore";
 import { ResultDialog } from "../components/ui/dialog";
 import useSound from "use-sound";
@@ -44,7 +44,7 @@ const QuestionPage = () => {
     : false;
 
   // Get the question data
-  const question = additionalQuestions[questionNumber - 1] || null;
+  const question = prosperityQuestions[questionNumber - 1] || null;
 
   // UI state
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(

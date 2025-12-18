@@ -3,8 +3,8 @@ import NumberGrid from "../components/game/NumberGrid";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useGameStore } from "../store/gameStore";
-import { additionalQuestions } from "../data/additionalQuestions";
-import { ChevronLeft, Users } from "lucide-react";
+import { prosperityQuestions } from "../data/prosperityQuestions";
+import { ChevronLeft } from "lucide-react";
 
 function GamePage() {
   const navigate = useNavigate();
@@ -179,14 +179,6 @@ function GamePage() {
 
       <div className="flex-1 min-h-0 flex flex-col w-full">
         {/* Header - Compact */}
-        <div className="flex-none flex items-center justify-center mb-2 md:mb-4 px-2">
-          <Users className="w-5 h-5 md:w-6 md:h-6 text-blue-700 mr-2" />
-          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-center text-blue-900 truncate">
-            {currentPlayer
-              ? `${currentPlayer.name}, select a question`
-              : "Select a question"}
-          </h2>
-        </div>
 
         {/* Game Content - Flex Grow */}
         <div className="flex-1 min-h-0 relative bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
@@ -211,7 +203,7 @@ function GamePage() {
 
           <div className="w-full h-full p-2 md:p-4 lg:p-6 overflow-hidden">
             <NumberGrid
-              totalNumbers={additionalQuestions.length}
+              totalNumbers={prosperityQuestions.length}
               onSelectNumber={handleNumberSelect}
               completedNumbers={completedNumbers}
               highlightedNumbers={availableQuestions}

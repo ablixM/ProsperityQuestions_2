@@ -26,6 +26,7 @@ function HomePage() {
 
   const handleResetConfirm = () => {
     resetGame();
+    localStorage.removeItem("readQuestions");
     setIsResetDialogOpen(false);
     // Scroll to top when resetting game
     setTimeout(() => {
