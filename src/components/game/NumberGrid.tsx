@@ -1,117 +1,71 @@
-import { FC } from "react";
-// import { useGameStore } from "../../store/gameStore";
+import React from "react";
+import { Question } from "../../data/questions";
+import { useGameStore } from "../../store/gameStore";
 
 interface NumberGridProps {
-  totalNumbers: number;
+  questions: Question[];
   onSelectNumber: (number: number) => void;
   completedNumbers: number[];
+  currentRoundCompleted: number[];
   highlightedNumbers?: number[];
   tieBreakers?: number[];
 }
 
-const NumberGrid: FC<NumberGridProps> = ({
-  totalNumbers,
+const NumberGrid: React.FC<NumberGridProps> = ({
+  questions,
   onSelectNumber,
   completedNumbers,
+  currentRoundCompleted,
   highlightedNumbers = [],
   tieBreakers = [],
 }) => {
-  // const currentPlayer = useGameStore((state) => state.getCurrentPlayer());
+  const activeQuestionType = useGameStore((state) => state.activeQuestionType);
+  const setActiveQuestionType = useGameStore(
+    (state) => state.setActiveQuestionType
+  );
 
-  // const getMaxQuestionsPerPlayer = useGameStore(
-  //   (state) => state.getMaxQuestionsPerPlayer
-  // );
-  // const hasPlayerReachedMaxQuestions = useGameStore(
-  //   (state) => state.hasPlayerReachedMaxQuestions
-  // );
+  // Get previous round completed numbers (questions from all rounds except current)
+  const previousRoundCompleted = completedNumbers.filter(
+    (num: number) => !currentRoundCompleted.includes(num)
+  );
 
-  // Generate numbers array from 1 to totalNumbers
-  const numbers = Array.from({ length: totalNumbers }, (_, i) => i + 1);
+  // Filter out only previous round completed numbers (hide them completely)
+  const availableQuestions = questions.filter(
+    (q: Question) => !previousRoundCompleted.includes(q.id)
+  );
 
-  // Calculate player's question limit
-  // const playerQuestionLimit = currentPlayer ? getMaxQuestionsPerPlayer() : 0;
-  // const isPlayerInTieBreaker = currentPlayer
-  //   ? hasPlayerReachedMaxQuestions(currentPlayer.id)
-  //   : false;
+  // Group questions by type
+  const choiceQuestions = availableQuestions.filter(
+    (q: Question) => q.type === "choice" || !q.type
+  );
+  const explanationQuestions = availableQuestions.filter(
+    (q: Question) => q.type === "explanation"
+  );
 
-  // Calculate rows based on columns (10 columns on lg screens)
-  const cols = 10;
-  const rows = Math.ceil(totalNumbers / cols);
+  const renderGridSection = (sectionQuestions: Question[]) => {
+    if (sectionQuestions.length === 0) return null;
 
-  return (
-    <div className="w-full h-full flex flex-col lg:flex-row gap-2 md:gap-4 overflow-hidden">
-      {/* Player Info Section - Compact, no scroll */}
-      {/* {currentPlayer && (
-        <div className="flex-none lg:w-64 xl:w-72">
-          <div className="bg-white rounded-xl shadow-lg p-2 md:p-4 border border-blue-100 h-full">
-            <div className="flex flex-row lg:flex-col items-center gap-3 lg:gap-4 lg:space-y-2">
-           
-              <div className="flex-none w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden border-2 md:border-4 border-blue-200 bg-blue-50 flex items-center justify-center">
-                {currentPlayer.profileImage ? (
-                  <img
-                    src={currentPlayer.profileImage}
-                    alt={`${currentPlayer.name}'s profile`}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-blue-400" />
-                )}
-              </div>
+    // Calculate rows based on columns (12 columns on lg screens)
+    const cols = 12;
+    const rows = Math.ceil(sectionQuestions.length / cols);
 
-              
-              <div className="flex-1 flex flex-col lg:items-center text-left lg:text-center min-w-0">
-                <h2 className="text-base md:text-lg lg:text-xl font-bold text-blue-900 truncate w-full">
-                  {currentPlayer.name}
-                </h2>
-                <div className="flex flex-wrap gap-1 md:gap-2 mt-1 justify-start lg:justify-center">
-                  {currentPlayer.woreda && (
-                    <div className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full font-semibold truncate max-w-[100px]">
-                      {currentPlayer.woreda}
-                    </div>
-                  )}
-                  <div className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full font-semibold whitespace-nowrap">
-                    {currentPlayer.score} ነጥቦች
-                  </div>
-                </div>
-              </div>
-            </div>
-
-       
-            <div className="grid grid-cols-2 gap-2 mt-2 lg:mt-4 w-full">
-              <div className="bg-blue-50 p-1.5 md:p-2 rounded-lg text-center">
-                <p className="text-blue-500 text-[10px] md:text-xs font-medium uppercase">
-                  ጥያቄዎች
-                </p>
-                <p className="text-sm md:text-base font-bold text-blue-800 truncate">
-                  {currentPlayer.questionsAnswered.length}/{playerQuestionLimit}
-                  {isPlayerInTieBreaker && " +"}
-                </p>
-              </div>
-              <div className="bg-green-50 p-1.5 md:p-2 rounded-lg text-center">
-                <p className="text-green-500 text-[10px] md:text-xs font-medium uppercase">
-                  ትክክል
-                </p>
-                <p className="text-sm md:text-base font-bold text-green-800">
-                  {currentPlayer.correctAnswers}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )} */}
-
-      {/* Number Grid - Flex Grow, scrollable on small screens */}
-      <div className="flex-1 min-h-0 min-w-0 overflow-auto">
+    return (
+      <div className="mb-8">
+        {/* <div className="flex items-center gap-4">
+          <h3 className="text-xl md:text-2xl font-bold text-blue-900 whitespace-nowrap">
+            {title}
+          </h3>
+          <div className="h-px bg-blue-200 w-full" />
+        </div> */}
         <div
           className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-10 lg:grid-cols-12 gap-1.5 sm:gap-2 md:gap-2 w-full md:p-2"
           style={{
-            // On small screens: use fixed row height for scrolling
-            // On larger screens: use 1fr to fit screen
             gridTemplateRows: `repeat(${rows}, minmax(48px, 1fr))`,
           }}
         >
-          {numbers.map((number, index) => {
-            const isCompleted = completedNumbers.includes(number);
+          {sectionQuestions.map((question, index) => {
+            const number = question.id;
+            const isCompleted = currentRoundCompleted.includes(number);
             const isHighlighted = highlightedNumbers.includes(number);
             const isTieBreaker = tieBreakers.includes(number);
             const animationDelay = `${index * 0.02}s`;
@@ -166,6 +120,46 @@ const NumberGrid: FC<NumberGridProps> = ({
             );
           })}
         </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col  overflow-hidden p-2">
+      {/* Tab Switcher */}
+      <div className="flex p-1 bg-blue-50/50 rounded-xl border border-blue-100 self-center">
+        <button
+          onClick={() => setActiveQuestionType("choice")}
+          className={`px-6 rounded-lg text-lg font-bold transition-all ${
+            activeQuestionType === "choice"
+              ? "bg-white text-blue-600 shadow-md transform scale-105"
+              : "text-blue-400 hover:text-blue-500 hover:bg-white/50"
+          }`}
+        >
+          ምርጫ ጥያቄዎች
+          <span className="ml-2 bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full">
+            {choiceQuestions.length}
+          </span>
+        </button>
+        <button
+          onClick={() => setActiveQuestionType("explanation")}
+          className={`px-6 py-2.5 rounded-lg text-lg font-bold transition-all ${
+            activeQuestionType === "explanation"
+              ? "bg-white text-blue-600 shadow-md transform scale-105"
+              : "text-blue-400 hover:text-blue-500 hover:bg-white/50"
+          }`}
+        >
+          የማብራሪያ ጥያቄዎች
+          <span className="ml-2 bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full">
+            {explanationQuestions.length}
+          </span>
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-auto">
+        {activeQuestionType === "choice"
+          ? renderGridSection(choiceQuestions)
+          : renderGridSection(explanationQuestions)}
       </div>
     </div>
   );

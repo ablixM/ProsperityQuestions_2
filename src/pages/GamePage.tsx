@@ -16,10 +16,10 @@ function GamePage() {
 
   // Global state from Zustand
   const {
-    completedNumbers,
     getCurrentPlayer,
     getAvailableQuestionsForCurrentPlayer,
-
+    getAllCompletedNumbers,
+    getCurrentRoundCompletedNumbers,
     tieBreakers,
   } = useGameStore();
 
@@ -203,9 +203,10 @@ function GamePage() {
 
           <div className="w-full h-full p-2 md:p-4 lg:p-6 overflow-hidden">
             <NumberGrid
-              totalNumbers={prosperityQuestions.length}
+              questions={prosperityQuestions}
               onSelectNumber={handleNumberSelect}
-              completedNumbers={completedNumbers}
+              completedNumbers={getAllCompletedNumbers()}
+              currentRoundCompleted={getCurrentRoundCompletedNumbers()}
               highlightedNumbers={availableQuestions}
               tieBreakers={tieBreakers}
             />

@@ -21,6 +21,12 @@ interface GameState {
     questionAnswers: Record<number, number>;
     tieBreakers: number[];
   } | null;
+  roundTwoState: {
+    players: Player[];
+    completedNumbers: number[];
+    questionAnswers: Record<number, number>;
+    tieBreakers: number[];
+  } | null;
   roundTwoPlayers: string[]; // Player IDs selected for round two
 
   players: Player[];
@@ -29,6 +35,7 @@ interface GameState {
   questionAnswers: Record<number, number>;
   totalQuestions: number;
   tieBreakers: number[]; // Track which questions are tie breakers
+  activeQuestionType: "choice" | "explanation";
 
   // Player management
   addPlayer: (name: string, profileImage: string, woreda: string) => void;
@@ -36,6 +43,7 @@ interface GameState {
   setCurrentPlayer: (id: string | null) => void;
   getCurrentPlayer: () => Player | null;
   getPlayerRankings: () => Player[];
+  setActiveQuestionType: (type: "choice" | "explanation") => void;
 
   // Round management
   startRoundTwo: (selectedPlayerIds: string[]) => void;
@@ -66,6 +74,8 @@ interface GameState {
   isTieBreakerQuestion: (questionNumber: number) => boolean;
   recalculateTieBreakers: () => void;
   hasPlayerReachedMaxQuestions: (playerId: string) => boolean;
+  getAllCompletedNumbers: () => number[]; // Get all completed numbers including previous rounds
+  getCurrentRoundCompletedNumbers: () => number[]; // Get only current round's completed numbers
 }
 
 // Using persist middleware to save game state to localStorage
@@ -75,14 +85,16 @@ export const useGameStore = create<GameState>()(
       // Round management
       currentRound: 1,
       roundOneState: null,
+      roundTwoState: null,
       roundTwoPlayers: [],
 
       players: [],
       currentPlayerId: null,
       completedNumbers: [],
       questionAnswers: {},
-      totalQuestions: 114, // Updated to match the total number of questions in questions.ts
+      totalQuestions: 127, // Updated to match the total number of questions in questions.ts
       tieBreakers: [],
+      activeQuestionType: "choice",
 
       addPlayer: (
         name: string,
@@ -142,6 +154,10 @@ export const useGameStore = create<GameState>()(
 
       getPlayerRankings: () => {
         return [...get().players].sort((a, b) => b.score - a.score);
+      },
+
+      setActiveQuestionType: (type: "choice" | "explanation") => {
+        set({ activeQuestionType: type });
       },
 
       markQuestionAsCompleted: (
@@ -214,14 +230,16 @@ export const useGameStore = create<GameState>()(
           // Round management
           currentRound: 1,
           roundOneState: null,
+          roundTwoState: null,
           roundTwoPlayers: [],
 
           players: [],
           currentPlayerId: null,
           completedNumbers: [],
           questionAnswers: {},
-          totalQuestions: 114, // Updated to match the total number of questions in questions.ts
+          totalQuestions: 127, // Updated to match the total number of questions in questions.ts
           tieBreakers: [],
+          activeQuestionType: "choice",
         });
       },
 
@@ -253,9 +271,12 @@ export const useGameStore = create<GameState>()(
           (_, i) => i + 1
         );
 
-        // Filter out questions that are already answered
+        // Get all completed numbers including from previous rounds
+        const allCompletedNumbers = get().getAllCompletedNumbers();
+
+        // Filter out questions that are already answered (in any round)
         const unansweredQuestions = allQuestions.filter(
-          (qNum) => !get().completedNumbers.includes(qNum)
+          (qNum) => !allCompletedNumbers.includes(qNum)
         );
 
         // Get available tiebreaker questions
@@ -271,6 +292,39 @@ export const useGameStore = create<GameState>()(
 
         // If player hasn't reached max, they can answer any unanswered question
         return unansweredQuestions;
+      },
+
+      getAllCompletedNumbers: () => {
+        const state = get();
+
+        // Merge completed numbers from both rounds
+        const roundOneCompleted = state.roundOneState?.completedNumbers || [];
+        const roundTwoCompleted = state.roundTwoState?.completedNumbers || [];
+        const currentCompleted = state.completedNumbers || [];
+
+        // If we're in Round 1 and Round 2 state exists, merge Round 2's completed
+        // If we're in Round 2 and Round 1 state exists, merge Round 1's completed
+        // This ensures questions answered in one round are hidden in the other
+        if (state.currentRound === 1 && state.roundTwoState) {
+          // In Round 1, merge with Round 2's completed numbers
+          return Array.from(
+            new Set([...currentCompleted, ...roundTwoCompleted])
+          );
+        } else if (state.currentRound === 2 && state.roundOneState) {
+          // In Round 2, merge with Round 1's completed numbers
+          return Array.from(
+            new Set([...currentCompleted, ...roundOneCompleted])
+          );
+        }
+
+        // Otherwise, just return current round's completed numbers
+        return currentCompleted;
+      },
+
+      getCurrentRoundCompletedNumbers: () => {
+        const state = get();
+        // Always return only the current round's completed numbers
+        return state.completedNumbers || [];
       },
 
       getQuestionsPerPlayer: () => {
@@ -405,8 +459,20 @@ export const useGameStore = create<GameState>()(
       switchToRound: (round: 1 | 2) => {
         set((state) => {
           if (round === 1 && state.roundOneState) {
+            // Save current Round 2 state before switching to Round 1
+            const roundTwoState =
+              state.currentRound === 2
+                ? {
+                    players: [...state.players],
+                    completedNumbers: [...state.completedNumbers],
+                    questionAnswers: { ...state.questionAnswers },
+                    tieBreakers: [...state.tieBreakers],
+                  }
+                : state.roundTwoState;
+
             return {
               currentRound: 1,
+              roundTwoState,
               players: [...state.roundOneState.players],
               currentPlayerId: null,
               completedNumbers: [...state.roundOneState.completedNumbers],
@@ -414,16 +480,42 @@ export const useGameStore = create<GameState>()(
               tieBreakers: [...state.roundOneState.tieBreakers],
             };
           } else if (round === 2) {
-            const roundTwoPlayers =
-              state.roundOneState?.players.filter((player) =>
-                state.roundTwoPlayers.includes(player.id)
-              ) || [];
+            // Save current Round 1 state if we're coming from Round 1
+            const roundOneState =
+              state.currentRound === 1
+                ? {
+                    players: [...state.players],
+                    completedNumbers: [...state.completedNumbers],
+                    questionAnswers: { ...state.questionAnswers },
+                    tieBreakers: [...state.tieBreakers],
+                  }
+                : state.roundOneState;
 
-            return {
-              currentRound: 2,
-              players: roundTwoPlayers,
-              currentPlayerId: null,
-            };
+            // Restore Round 2 state if it exists, otherwise use current state
+            if (state.roundTwoState) {
+              return {
+                currentRound: 2,
+                roundOneState,
+                players: [...state.roundTwoState.players],
+                currentPlayerId: null,
+                completedNumbers: [...state.roundTwoState.completedNumbers],
+                questionAnswers: { ...state.roundTwoState.questionAnswers },
+                tieBreakers: [...state.roundTwoState.tieBreakers],
+              };
+            } else {
+              // First time switching to Round 2, use current players
+              const roundTwoPlayers =
+                state.roundOneState?.players.filter((player) =>
+                  state.roundTwoPlayers.includes(player.id)
+                ) || [];
+
+              return {
+                currentRound: 2,
+                roundOneState,
+                players: roundTwoPlayers,
+                currentPlayerId: null,
+              };
+            }
           }
           return state;
         });
@@ -466,6 +558,7 @@ export const useGameStore = create<GameState>()(
         set((state) => ({
           currentRound: 1,
           roundOneState: null,
+          roundTwoState: null,
           roundTwoPlayers: [],
           players: state.roundOneState?.players || [],
           currentPlayerId: null,

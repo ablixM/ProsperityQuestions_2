@@ -1,8 +1,10 @@
 export interface Question {
   id: number;
   question: string;
-  options: string[];
-  correctAnswer: number;
+  type?: "choice" | "explanation";
+  options?: string[];
+  correctAnswer?: number;
+  explanationAnswer?: string[]; // For bullet points
 }
 
 export const questionsData: Question[] = [

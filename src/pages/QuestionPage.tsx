@@ -60,7 +60,7 @@ const QuestionPage = () => {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
 
   // Inline timer state
-  const TIMER_DURATION = 60;
+  const TIMER_DURATION = question?.type === "explanation" ? 120 : 60;
   const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
   const [timerIsPaused, setTimerIsPaused] = useState(true);
   const [timerStopped, setTimerStopped] = useState(false); // Permanently stopped
@@ -125,9 +125,13 @@ const QuestionPage = () => {
 
     // Mark the question as incorrect due to timeout
     if (question) {
-      setSelectedAnswerIndex(question.correctAnswer);
+      setSelectedAnswerIndex(question.correctAnswer ?? -1);
       setIsCorrect(false);
-      markQuestionAsCompleted(questionNumber, question.correctAnswer, false);
+      markQuestionAsCompleted(
+        questionNumber,
+        question.correctAnswer ?? -1,
+        false
+      );
       playError();
       setShowResultDialog(true);
     }
@@ -242,17 +246,25 @@ const QuestionPage = () => {
     // IMMEDIATELY stop the timer
     stopTimerPermanently();
 
-    // If not already answered, mark as incorrect and complete
+    // If not already answered, mark as completed
     if (!isAnswered && !isPreviouslyAnswered) {
       setIsAnswered(true);
-      setIsCorrect(false);
 
-      // Mark as completed with currently selected answer (or null)
-      markQuestionAsCompleted(
-        questionNumber,
-        selectedAnswerIndex !== null ? selectedAnswerIndex : -1,
-        false
-      );
+      if (question?.type === "explanation") {
+        // Explanation questions are marked as correct when revealed
+        setIsCorrect(true);
+        // Sound and pop-up are muted for explanation questions
+        markQuestionAsCompleted(questionNumber, 0, true);
+        setShowResultDialog(false);
+      } else {
+        // Choice questions are marked as incorrect when revealed
+        setIsCorrect(false);
+        markQuestionAsCompleted(
+          questionNumber,
+          selectedAnswerIndex !== null ? selectedAnswerIndex : -1,
+          false
+        );
+      }
     }
   };
 
@@ -404,62 +416,87 @@ const QuestionPage = () => {
               </p>
             </div>
 
-            {/* Answer Options */}
+            {/* Answer Content */}
             <div className="space-y-3 md:space-y-4 mb-6 md:mb-10">
               <h3 className="text-xl md:text-2xl lg:text-3xl font-medium text-blue-900 mb-4 md:mb-6">
-                ምርጫ
+                {question.type === "explanation" ? "መልስ" : "ምርጫ"}
               </h3>
-              <div className="grid grid-cols-1 gap-4 md:gap-6">
-                {question.options.map((option, index) => {
-                  const isSelected = selectedAnswerIndex === index;
-                  const isCorrectAnswer = question.correctAnswer === index;
 
-                  let optionClass =
-                    "border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-50";
+              {question.type === "explanation" ? (
+                // Explanation Answer (Bullted List)
+                <div className="bg-white border-2 border-blue-100 rounded-xl p-4 md:p-6 lg:p-8">
+                  {showCorrectAnswer || isPreviouslyAnswered ? (
+                    <ul className="space-y-3 md:space-y-4">
+                      {question.explanationAnswer?.map((point, index) => (
+                        <li key={index} className="flex items-start">
+                          <div className="flex-shrink-0 w-2 h-2 md:w-3 md:h-3 rounded-full bg-blue-500 mt-2 md:mt-3 mr-3 md:mr-4" />
+                          <span className="text-lg md:text-xl lg:text-2xl text-gray-800">
+                            {point}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-10 text-gray-400 italic text-lg md:text-xl">
+                      <Eye className="w-12 h-12 mb-4 opacity-20" />
+                      መልሱን ለማየት "ትክክለኛዉን መልስ አሳይ" የሚለውን ይጫኑ
+                    </div>
+                  )}
+                </div>
+              ) : (
+                // Choice Options
+                <div className="grid grid-cols-1 gap-4 md:gap-6">
+                  {question.options?.map((option, index) => {
+                    const isSelected = selectedAnswerIndex === index;
+                    const isCorrectAnswer = question.correctAnswer === index;
 
-                  if (isAnswered && showCorrectAnswer) {
-                    if (isSelected && isCorrect) {
-                      optionClass = "border-2 border-green-500 bg-green-50";
-                    } else if (isSelected && !isCorrect) {
-                      optionClass = "border-2 border-red-500 bg-red-50";
-                    } else if (isCorrectAnswer) {
-                      optionClass = "border-2 border-green-500 bg-green-50";
+                    let optionClass =
+                      "border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-50";
+
+                    if (isAnswered && showCorrectAnswer) {
+                      if (isSelected && isCorrect) {
+                        optionClass = "border-2 border-green-500 bg-green-50";
+                      } else if (isSelected && !isCorrect) {
+                        optionClass = "border-2 border-red-500 bg-red-50";
+                      } else if (isCorrectAnswer) {
+                        optionClass = "border-2 border-green-500 bg-green-50";
+                      }
+                    } else if (isSelected) {
+                      optionClass = "border-2 border-blue-500 bg-blue-50";
                     }
-                  } else if (isSelected) {
-                    optionClass = "border-2 border-blue-500 bg-blue-50";
-                  }
 
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleAnswerSelect(index)}
-                      className={`p-3 md:p-4 lg:p-6 rounded-xl text-left transition-all ${optionClass} ${
-                        isAnswered || isPreviouslyAnswered
-                          ? "cursor-default"
-                          : "cursor-pointer hover:shadow-lg"
-                      }`}
-                      disabled={isAnswered || isPreviouslyAnswered}
-                    >
-                      <div className="flex items-center">
-                        <div
-                          className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center border-2 ${
-                            isSelected
-                              ? "border-blue-600 bg-blue-600 text-white"
-                              : "border-gray-400"
-                          }`}
-                        >
-                          <span className="text-sm md:text-base">
-                            {["ሀ", "ለ", "ሐ", "መ", "ሠ"][index]}
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleAnswerSelect(index)}
+                        className={`p-3 md:p-4 lg:p-6 rounded-xl text-left transition-all ${optionClass} ${
+                          isAnswered || isPreviouslyAnswered
+                            ? "cursor-default"
+                            : "cursor-pointer hover:shadow-lg"
+                        }`}
+                        disabled={isAnswered || isPreviouslyAnswered}
+                      >
+                        <div className="flex items-center">
+                          <div
+                            className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center border-2 ${
+                              isSelected
+                                ? "border-blue-600 bg-blue-600 text-white"
+                                : "border-gray-400"
+                            }`}
+                          >
+                            <span className="text-sm md:text-base">
+                              {["ሀ", "ለ", "ሐ", "መ", "ሠ"][index]}
+                            </span>
+                          </div>
+                          <span className="ml-3 md:ml-4 text-lg md:text-xl lg:text-2xl font-medium">
+                            {option}
                           </span>
                         </div>
-                        <span className="ml-3 md:ml-4 text-lg md:text-xl lg:text-2xl font-medium">
-                          {option}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Status Messages */}
@@ -472,7 +509,7 @@ const QuestionPage = () => {
               </div>
             )}
 
-            {isAnswered && isCorrect && (
+            {isAnswered && isCorrect && question.type !== "explanation" && (
               <div className="p-4 md:p-6 bg-green-50 text-green-600 rounded-xl text-center text-lg md:text-xl lg:text-2xl font-medium mb-6 md:mb-8">
                 <div className="flex items-center justify-center">
                   <CheckCircle2 className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-3" />
@@ -584,7 +621,7 @@ const QuestionPage = () => {
                 </div>
 
                 {/* Answer Status */}
-                {isAnswered && isCorrect && (
+                {isAnswered && isCorrect && question.type !== "explanation" && (
                   <div className="mt-4 md:mt-6 p-3 md:p-4 bg-green-50 text-green-700 rounded-xl text-center">
                     <CheckCircle2 className="w-8 h-8 md:w-10 md:h-10 mx-auto mb-2 text-green-500" />
                     <h4 className="font-bold text-base md:text-lg">

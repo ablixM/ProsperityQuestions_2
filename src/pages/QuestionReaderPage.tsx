@@ -158,30 +158,48 @@ function QuestionReaderPage() {
               </p>
             </div>
 
-            {/* Answer Options */}
+            {/* Answer Content */}
             <div className="space-y-3 md:space-y-4">
               <h3 className="text-xl md:text-2xl lg:text-3xl font-medium text-blue-900 mb-4 md:mb-6">
-                ምርጫ
+                {question.type === "explanation" ? "መልስ" : "ምርጫ"}
               </h3>
-              <div className="grid grid-cols-1 gap-3 md:gap-4">
-                {question.options.map((option, index) => (
-                  <div
-                    key={index}
-                    className="p-3 md:p-4 lg:p-6 rounded-xl border-2 border-gray-300 bg-gray-50"
-                  >
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center border-2 border-gray-400 mr-3 md:mr-4">
-                        <span className="text-sm md:text-base">
-                          {["ሀ", "ለ", "ሐ", "መ", "ሠ"][index]}
+
+              {question.type === "explanation" ? (
+                // Explanation Answer (Bulleted List)
+                <div className="bg-white border-2 border-blue-100 rounded-xl p-4 md:p-6 lg:p-8">
+                  <ul className="space-y-3 md:space-y-4">
+                    {question.explanationAnswer?.map((point, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="flex-shrink-0 w-2 h-2 md:w-3 md:h-3 rounded-full bg-blue-500 mt-2 md:mt-3 mr-3 md:mr-4" />
+                        <span className="text-lg md:text-xl lg:text-2xl text-gray-800">
+                          {point}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                // Choice Options
+                <div className="grid grid-cols-1 gap-3 md:gap-4">
+                  {question.options?.map((option, index) => (
+                    <div
+                      key={index}
+                      className="p-3 md:p-4 lg:p-6 rounded-xl border-2 border-gray-300 bg-gray-50"
+                    >
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center border-2 border-gray-400 mr-3 md:mr-4">
+                          <span className="text-sm md:text-base">
+                            {["ሀ", "ለ", "ሐ", "መ", "ሠ"][index]}
+                          </span>
+                        </div>
+                        <span className="text-lg md:text-xl lg:text-2xl font-medium">
+                          {option}
                         </span>
                       </div>
-                      <span className="text-lg md:text-xl lg:text-2xl font-medium">
-                        {option}
-                      </span>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

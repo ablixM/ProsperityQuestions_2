@@ -1,6 +1,7 @@
 import type { Question } from "./questions";
+import { explanationQuestions } from "./explanationQuestions";
 
-export const prosperityQuestions: Question[] = [
+const existingChoiceQuestions: Question[] = [
   {
     id: 1,
     question: "የብልፀግና ህብረት የአመራር ኮሚቴ አባላት ከአስር እስከ አስራ ሁለት መብለጥ የለበትም፡፡",
@@ -931,4 +932,9 @@ export const prosperityQuestions: Question[] = [
     ],
     correctAnswer: 3,
   },
+];
+
+export const prosperityQuestions: Question[] = [
+  ...existingChoiceQuestions.map((q) => ({ ...q, type: "choice" as const })),
+  ...explanationQuestions,
 ];
