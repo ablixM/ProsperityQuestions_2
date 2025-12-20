@@ -161,7 +161,7 @@ function HomePage() {
             </h1>
 
             {/* Player Management Section */}
-            <div className="mt-8 md:mt-16 bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:p-10 max-w-6xl mx-auto relative z-10 player-list-section">
+            <div className="mt-8 md:mt-16 bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:p-10 max-w-7xl mx-auto relative z-10 player-list-section">
               <div className="flex items-center justify-center mb-6 md:mb-10">
                 <Users className="w-6 h-6 md:w-8 md:h-8 text-blue-600 mr-2 md:mr-3" />
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">
