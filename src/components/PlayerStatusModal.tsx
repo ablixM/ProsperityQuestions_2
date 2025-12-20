@@ -28,6 +28,8 @@ const PlayerStatusModal = ({
 
   // State for round two setup
   const [showRoundTwoSetup, setShowRoundTwoSetup] = useState(false);
+  // State for round three setup
+  const [showRoundThreeSetup, setShowRoundThreeSetup] = useState(false);
 
   // Get game store functions
   const getMaxQuestionsPerPlayer = useGameStore(
@@ -40,6 +42,7 @@ const PlayerStatusModal = ({
   const currentRound = useGameStore((state) => state.currentRound);
   const roundOneState = useGameStore((state) => state.roundOneState);
   const startRoundTwo = useGameStore((state) => state.startRoundTwo);
+  const startRoundThree = useGameStore((state) => state.startRoundThree);
   const switchToRound = useGameStore((state) => state.switchToRound);
   const roundTwoPlayers = useGameStore((state) => state.roundTwoPlayers);
   const addPlayerToRoundTwo = useGameStore(
@@ -50,6 +53,18 @@ const PlayerStatusModal = ({
   );
   const getRoundOnePlayers = useGameStore((state) => state.getRoundOnePlayers);
   const resetRoundTwo = useGameStore((state) => state.resetRoundTwo);
+  const roundTwoState = useGameStore((state) => state.roundTwoState);
+  const roundThreePlayers = useGameStore((state) => state.roundThreePlayers);
+  const addPlayerToRoundThree = useGameStore(
+    (state) => state.addPlayerToRoundThree
+  );
+  const removePlayerFromRoundThree = useGameStore(
+    (state) => state.removePlayerFromRoundThree
+  );
+  const getRoundThreePlayers = useGameStore(
+    (state) => state.getRoundThreePlayers
+  );
+  const resetRoundThree = useGameStore((state) => state.resetRoundThree);
 
   // Handle revert confirmation
   const handleRevertConfirm = () => {
@@ -110,6 +125,19 @@ const PlayerStatusModal = ({
                 >
                   ዙር 2
                 </Button>
+                {roundTwoState && (
+                  <Button
+                    onClick={() => switchToRound(3)}
+                    variant={currentRound === 3 ? "secondary" : "outline"}
+                    className={`text-xs md:text-sm px-2 py-1 md:px-3 ${
+                      currentRound === 3
+                        ? "bg-white text-blue-600"
+                        : "text-white border-white hover:bg-white hover:text-blue-600"
+                    }`}
+                  >
+                    ዙር 3
+                  </Button>
+                )}
               </div>
             )}
             <Button
@@ -372,6 +400,242 @@ const PlayerStatusModal = ({
                             <span
                               key={player.id}
                               className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                            >
+                              {player.name}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Round Three Setup Section - Only show in Round 2 */}
+              {currentRound === 2 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-6 mt-4">
+                  {!showRoundThreeSetup ? (
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold text-blue-900 mb-4">
+                        ዙር ሶስት ፍጠር
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        ለዙር ሶስት ከዙር ሁለት ተወዳዳሪዎች አንዳንዶቹን ይምረጡ።
+                      </p>
+                      <Button
+                        onClick={() => setShowRoundThreeSetup(true)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        ዙር ሶስት ፍጠር
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-2xl font-bold text-blue-900">
+                          ለዙር ሶስት ተወዳዳሪዎችን ይምረጡ
+                        </h3>
+                        <Button
+                          onClick={() => setShowRoundThreeSetup(false)}
+                          variant="outline"
+                          size="sm"
+                        >
+                          ይቅር
+                        </Button>
+                      </div>
+                      <p className="text-gray-600 mb-4">
+                        ከዙር ሁለት የተመረጡ ተወዳዳሪዎች ውስጥ ለዙር ሶስት የሚሳተፉን ይምረጡ።
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                        {(roundTwoState?.players || []).map((player) => {
+                          const isSelected = roundThreePlayers.includes(
+                            player.id
+                          );
+                          return (
+                            <div
+                              key={player.id}
+                              className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                                isSelected
+                                  ? "border-blue-500 bg-blue-50"
+                                  : "border-gray-200 hover:border-blue-300"
+                              }`}
+                              onClick={() =>
+                                isSelected
+                                  ? removePlayerFromRoundThree(player.id)
+                                  : addPlayerToRoundThree(player.id)
+                              }
+                            >
+                              <div className="flex items-center">
+                                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-200 flex items-center justify-center bg-blue-50 mr-3">
+                                  {player.profileImage ? (
+                                    <img
+                                      src={player.profileImage}
+                                      alt={`${player.name}'s profile`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <User className="w-6 h-6 text-blue-400" />
+                                  )}
+                                </div>
+                                <div>
+                                  <p className="font-medium text-gray-900">
+                                    {player.name}
+                                  </p>
+                                  <p className="text-sm text-gray-500">
+                                    ነጥቦች: {player.score}
+                                  </p>
+                                </div>
+                                {isSelected && (
+                                  <div className="ml-auto text-blue-500">
+                                    <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                                      <span className="text-white text-sm">
+                                        ✓
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {roundThreePlayers.length > 0 && (
+                        <div className="flex justify-end">
+                          <Button
+                            onClick={() => startRoundThree(roundThreePlayers)}
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            ዙር ሶስት ጀምር ({roundThreePlayers.length} ተወዳሪዎች)
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Round Three Player Management - Show in Round 3 */}
+              {currentRound === 3 && roundTwoState && (
+                <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-2xl font-bold text-purple-900">
+                      ዙር ሶስት ተወዳዳሪዎችን አስተካክል
+                    </h3>
+                    <Button
+                      onClick={() =>
+                        setShowRoundThreeSetup(!showRoundThreeSetup)
+                      }
+                      variant="outline"
+                      size="sm"
+                      className="border-purple-300 text-purple-700 hover:bg-purple-100"
+                    >
+                      {showRoundThreeSetup ? "ይቅር" : "አስተካክል"}
+                    </Button>
+                  </div>
+
+                  {showRoundThreeSetup && (
+                    <>
+                      <p className="text-gray-600 mb-4">
+                        ለዙር ሶስት ተወዳዳሪዎችን ያክሉ ወይም ያስወግዱ። ለውጦች በተግባር ላይ የሚሆኑበት ጊዜ
+                        ዙር ሶስትን እንደገና ስብሰብ ነው።
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                        {getRoundThreePlayers().map((player) => {
+                          const isSelected = roundThreePlayers.includes(
+                            player.id
+                          );
+                          return (
+                            <div
+                              key={player.id}
+                              className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                                isSelected
+                                  ? "border-purple-500 bg-purple-50"
+                                  : "border-gray-200 hover:border-purple-300"
+                              }`}
+                              onClick={() =>
+                                isSelected
+                                  ? removePlayerFromRoundThree(player.id)
+                                  : addPlayerToRoundThree(player.id)
+                              }
+                            >
+                              <div className="flex items-center">
+                                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-200 flex items-center justify-center bg-purple-50 mr-3">
+                                  {player.profileImage ? (
+                                    <img
+                                      src={player.profileImage}
+                                      alt={`${player.name}'s profile`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <User className="w-6 h-6 text-purple-400" />
+                                  )}
+                                </div>
+                                <div>
+                                  <p className="font-medium text-gray-900">
+                                    {player.name}
+                                  </p>
+                                  <p className="text-sm text-gray-500">
+                                    ነጥቦች: {player.score}
+                                  </p>
+                                </div>
+                                {isSelected && (
+                                  <div className="ml-auto text-purple-500">
+                                    <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
+                                      <span className="text-white text-sm">
+                                        ✓
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => {
+                              resetRoundThree();
+                              setShowRoundThreeSetup(false);
+                            }}
+                            variant="outline"
+                            className="border-red-300 text-red-700 hover:bg-red-100"
+                          >
+                            ዙር ሶስትን ያጥፉ
+                          </Button>
+                          <p className="text-sm text-gray-600 self-center">
+                            ተወዳዳሪዎች ተመርጠዋል፡ {roundThreePlayers.length}
+                          </p>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            // Restart round three with updated players
+                            startRoundThree(roundThreePlayers);
+                            setShowRoundThreeSetup(false);
+                          }}
+                          className="bg-purple-600 hover:bg-purple-700 text-white"
+                          disabled={roundThreePlayers.length === 0}
+                        >
+                          ዙር ሶስትን እንደገና ጀምር
+                        </Button>
+                      </div>
+                    </>
+                  )}
+
+                  {!showRoundThreeSetup && (
+                    <div className="text-center">
+                      <p className="text-gray-600 mb-4">
+                        ዙር ሶስት ተወዳዳሪዎች፡ {roundThreePlayers.length} ተወዳዳሪዎች
+                      </p>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {(roundTwoState?.players || [])
+                          .filter((player) =>
+                            roundThreePlayers.includes(player.id)
+                          )
+                          .map((player) => (
+                            <span
+                              key={player.id}
+                              className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm"
                             >
                               {player.name}
                             </span>

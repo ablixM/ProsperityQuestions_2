@@ -16,12 +16,15 @@ function HomePage() {
     currentRound,
     roundOneState,
     resetRoundTwo,
+    resetRoundThree,
   } = useGameStore();
   const navigate = useNavigate();
   const location = useLocation();
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [showPlayerStatus, setShowPlayerStatus] = useState(false);
   const [isResetRoundTwoDialogOpen, setIsResetRoundTwoDialogOpen] =
+    useState(false);
+  const [isResetRoundThreeDialogOpen, setIsResetRoundThreeDialogOpen] =
     useState(false);
 
   const handleResetConfirm = () => {
@@ -37,6 +40,11 @@ function HomePage() {
   const handleResetRoundTwoConfirm = () => {
     resetRoundTwo();
     setIsResetRoundTwoDialogOpen(false);
+  };
+
+  const handleResetRoundThreeConfirm = () => {
+    resetRoundThree();
+    setIsResetRoundThreeDialogOpen(false);
   };
 
   const togglePlayerStatus = () => {
@@ -86,6 +94,18 @@ function HomePage() {
         confirmLabel="ዙር ሁለትን ዳግም አስጀምር"
         cancelLabel="ይቅር"
         onConfirm={handleResetRoundTwoConfirm}
+        variant="danger"
+      />
+
+      {/* Reset Round Three Dialog */}
+      <ConfirmationDialog
+        isOpen={isResetRoundThreeDialogOpen}
+        onClose={() => setIsResetRoundThreeDialogOpen(false)}
+        title="ዙር ሶስትን ዳግም አስጀምር"
+        message="ዙር ሶስትን ዳግም ማስጀመር እና ወደ ዙር ሁለት መመለስ ይፈልጋሉ? ይህ የዙር ሁለት መረጃን ይጠብቃል ግን የዙር ሶስት ሂደትን ያጠፋል።"
+        confirmLabel="ዙር ሶስትን ዳግም አስጀምር"
+        cancelLabel="ይቅር"
+        onConfirm={handleResetRoundThreeConfirm}
         variant="danger"
       />
 
@@ -178,6 +198,14 @@ function HomePage() {
                   className="mt-4 mr-4 text-orange-600 hover:text-orange-800 transition-colors text-sm md:text-lg underline underline-offset-4"
                 >
                   ዙር ሁለትን ያጥፉ እና እንደገና ጀምሩ
+                </button>
+              )}
+              {currentRound === 3 && (
+                <button
+                  onClick={() => setIsResetRoundThreeDialogOpen(true)}
+                  className="mt-4 mr-4 text-purple-600 hover:text-purple-800 transition-colors text-sm md:text-lg underline underline-offset-4"
+                >
+                  ዙር ሶስትን ያጥፉ እና እንደገና ጀምሩ
                 </button>
               )}
               <button
